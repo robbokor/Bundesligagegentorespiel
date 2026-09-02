@@ -36,12 +36,13 @@ jobs:
       - name: Änderung einchecken
         if: ${{ github.event_name == 'schedule' || inputs.modus == 'holen' }}
         run: |
-          if git diff --quiet -- daten/rheda.json; then
+          git config user.name  "FSC-Rheda-Spielplan"
+          git config user.email "actions@github.com"
+          # Erst vormerken: eine noch unbekannte Datei sieht "git diff" sonst nicht.
+          git add -A daten/rheda.json
+          if git diff --cached --quiet; then
             echo "Keine Änderung am Spielplan."
             exit 0
           fi
-          git config user.name  "FSC-Rheda-Spielplan"
-          git config user.email "actions@github.com"
-          git add daten/rheda.json
           git commit -m "Spielplan FSC Rheda vom $(date -u +%d.%m.%Y) übernommen"
           git push
