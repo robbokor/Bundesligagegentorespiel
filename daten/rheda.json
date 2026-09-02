@@ -1,0 +1,423 @@
+{
+  "stand": "2026-09-02T12:14:51.973Z",
+  "quelle": "fussball.de",
+  "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
+  "mannschaften": [
+    {
+      "appName": "FSC Rheda I",
+      "name": "FSC Rheda",
+      "teamId": "011MIB0SGC000000VTVG0001VTR8C1K7",
+      "liga": "Verbandsliga",
+      "spiele": [
+        {
+          "nr": "240016026",
+          "datum": "2026-07-14",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": true,
+          "gegner": "SV Avenwedde",
+          "abgesetzt": true
+        },
+        {
+          "nr": "240016074",
+          "datum": "2026-07-14",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "SV Avenwedde",
+          "abgesetzt": true
+        },
+        {
+          "nr": "240016027",
+          "datum": "2026-07-21",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": true,
+          "gegner": "SC Verl II",
+          "abgesetzt": false
+        },
+        {
+          "nr": "240040011",
+          "datum": "2026-07-25",
+          "zeit": "14:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "Delbrücker SC",
+          "abgesetzt": false
+        },
+        {
+          "nr": "240016135",
+          "datum": "2026-08-01",
+          "zeit": "14:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": true,
+          "gegner": "BV Bad Lippspringe",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097001",
+          "datum": "2026-08-09",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "FC Kaunitz",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097015",
+          "datum": "2026-08-16",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SV Mesum",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097017",
+          "datum": "2026-08-23",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "VfL Theesen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "202019015",
+          "datum": "2026-08-26",
+          "zeit": "19:00",
+          "wettbewerb": "Kreispokal",
+          "art": "pokal",
+          "heim": false,
+          "gegner": "Türkgücü Gütersloh",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097030",
+          "datum": "2026-08-30",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "Lüner SV",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097033",
+          "datum": "2026-09-06",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "SV Rödinghausen II",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097045",
+          "datum": "2026-09-13",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "SF Ostinghausen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097049",
+          "datum": "2026-09-20",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "FC RW Kirchlengern",
+          "abgesetzt": false
+        },
+        {
+          "nr": "202019033",
+          "datum": "2026-09-23",
+          "zeit": "19:00",
+          "wettbewerb": "Kreispokal",
+          "art": "pokal",
+          "heim": false,
+          "gegner": "TuS Westf. Neuenkirchen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097060",
+          "datum": "2026-09-26",
+          "zeit": "16:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SV Eintracht Ahaus",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097065",
+          "datum": "2026-10-04",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Rot Weiss Ahlen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097075",
+          "datum": "2026-10-11",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SuS Bad Westernkotten",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097081",
+          "datum": "2026-10-18",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Grün-Weiß Nottuln",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097090",
+          "datum": "2026-10-25",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SC Peckeloh",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097097",
+          "datum": "2026-11-08",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "FC Nordkirchen",
+          "abgesetzt": true
+        }
+      ]
+    },
+    {
+      "appName": "FSC Rheda II",
+      "name": "FSC Rheda II",
+      "teamId": "011MI95U5G000000VTVG0001VTR8C1K7",
+      "liga": "Kreisliga A",
+      "spiele": [
+        {
+          "nr": "210730225",
+          "datum": "2026-05-25",
+          "zeit": "18:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "Victoria Clarholz II",
+          "abgesetzt": true
+        },
+        {
+          "nr": "210730240",
+          "datum": "2026-05-29",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Tur Abdin Gütersloh",
+          "abgesetzt": false
+        },
+        {
+          "nr": "240016021",
+          "datum": "2026-07-23",
+          "zeit": "19:30",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "Tur Abdin Gütersloh",
+          "abgesetzt": true
+        },
+        {
+          "nr": "240016109",
+          "datum": "2026-07-26",
+          "zeit": "13:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": true,
+          "gegner": "TuS Friedrichsdorf",
+          "abgesetzt": true
+        },
+        {
+          "nr": "240016147",
+          "datum": "2026-07-31",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "Rot-Weiss St. Vit",
+          "abgesetzt": true
+        },
+        {
+          "nr": "240016129",
+          "datum": "2026-08-04",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "Druffeler SG",
+          "abgesetzt": false
+        },
+        {
+          "nr": "240016151",
+          "datum": "2026-08-08",
+          "zeit": "13:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "Yildizspor 1968 Rheda",
+          "abgesetzt": true
+        },
+        {
+          "nr": "210730007",
+          "datum": "2026-08-19",
+          "zeit": "19:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "Herzebrocker SV",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730009",
+          "datum": "2026-08-23",
+          "zeit": "12:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Germania Westerwiehe",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730022",
+          "datum": "2026-08-30",
+          "zeit": "15:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "TSG Harsewinkel",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730025",
+          "datum": "2026-09-06",
+          "zeit": "12:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "TuS Westf. Neuenkirchen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730037",
+          "datum": "2026-09-13",
+          "zeit": "15:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "VfL Rheda",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730041",
+          "datum": "2026-09-20",
+          "zeit": "12:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "RW Mastholte",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730052",
+          "datum": "2026-09-27",
+          "zeit": "15:15",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "Aramäer Rheda-Wiedenbrück",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730057",
+          "datum": "2026-10-04",
+          "zeit": "12:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "SCW Liemke",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730067",
+          "datum": "2026-10-09",
+          "zeit": "20:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "Victoria Clarholz II",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730073",
+          "datum": "2026-10-18",
+          "zeit": "12:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Aramäer Gütersloh",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730082",
+          "datum": "2026-10-25",
+          "zeit": "15:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "GW Langenberg-Benteler",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730089",
+          "datum": "2026-11-08",
+          "zeit": "12:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "FC Sürenheide 1976",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730097",
+          "datum": "2026-11-15",
+          "zeit": "12:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "SC GW Varensell",
+          "abgesetzt": true
+        }
+      ]
+    }
+  ]
+}
