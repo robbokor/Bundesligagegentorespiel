@@ -14,8 +14,10 @@ Abhängigkeiten.
 
 ## Wie gespielt wird
 
-1. **Auslosung** – Namen eintragen, Lostöpfe wählen (1. Bundesliga,
-   2. Bundesliga, eigene Mannschaften), ziehen. Standardmäßig bekommt jede
+1. **Auslosung** – Namen eintragen, den Lostopf zusammenstellen, ziehen.
+   Angekreuzt wird gezogen: so kommen einzelne Vereine dazu, ohne ihre ganze
+   Liga mitzuschleppen – etwa der SC Verl aus der 3. Liga neben den beiden
+   Bundesligen und den eigenen Mannschaften. Standardmäßig bekommt jede
    Mannschaft nur einen Spieler.
 2. **Ergebnisse** – die Bundesliga-Spieltage auf Knopfdruck abrufen; die
    eigenen Mannschaften von Hand eintragen.
@@ -27,9 +29,13 @@ stehen unter **Mehr**.
 
 ## Woher die Ergebnisse kommen
 
-1. und 2. Bundesliga von [OpenLigaDB](https://www.openligadb.de/) – frei
-zugänglich, ohne Anmeldung, ohne Schlüssel. Nach außen geht dabei nur die
-Anfrage nach Spielplan und Ergebnissen einer Liga, nichts über die Mitspieler.
+1. Bundesliga, 2. Bundesliga und 3. Liga von
+[OpenLigaDB](https://www.openligadb.de/) – frei zugänglich, ohne Anmeldung,
+ohne Schlüssel. Nach außen geht dabei nur die Anfrage nach Spielplan und
+Ergebnissen einer Liga, nichts über die Mitspieler.
+
+Nach dem Laden der 3. Liga liegt von dort zunächst *keine* Mannschaft im
+Lostopf – die gewünschte wird unter *Auslosung* einzeln angekreuzt.
 
 Für Kreisligen gibt es keine öffentliche Schnittstelle. Die Spiele der eigenen
 Mannschaften werden deshalb von Hand erfasst. Ein erneuter Abruf der Bundesliga

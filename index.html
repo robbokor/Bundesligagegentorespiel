@@ -18,6 +18,7 @@
   --warn-soft:#FBEEDD; --warn-line:#EFD5B0; --warn-ink:#8A5A19;
   --bad-soft:#FBE6E6; --bad-line:#F0C6C6; --bad-ink:#95383F;
   --blue-soft:#E8EFF6; --blue-line:#CBDCEB; --blue-ink:#37587A;
+  --lila-soft:#EEEAF7; --lila-line:#D6CDEC; --lila-ink:#5B4A87;
   --shadow:0 1px 2px rgba(30,43,36,.05), 0 10px 24px -18px rgba(30,43,36,.35);
   --r-s:10px; --r-m:16px; --r-l:22px;
   --ui:"Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
@@ -93,7 +94,14 @@ tr:last-child td{border-bottom:none}
   background:var(--sunk); color:var(--ink-2); white-space:nowrap}
 .pill.bl1{background:var(--grass-soft); color:var(--grass); border:1px solid var(--grass-line)}
 .pill.bl2{background:var(--blue-soft); color:var(--blue-ink); border:1px solid var(--blue-line)}
+.pill.bl3{background:var(--lila-soft); color:var(--lila-ink); border:1px solid var(--lila-line)}
 .pill.lokal{background:var(--warn-soft); color:var(--warn-ink); border:1px solid var(--warn-line)}
+.chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:12px}
+.chip{padding:6px 13px; border-radius:999px; border:1px solid var(--line-strong); background:var(--card);
+  font-size:13.5px; font-weight:600; color:var(--ink-3)}
+.chip:hover{border-color:var(--grass-line)}
+.chip.an{background:var(--grass-soft); border-color:var(--grass-line); color:var(--grass)}
+.chip.an::before{content:"\2713\00a0"; font-weight:700}
 .note{padding:12px 14px; border-radius:var(--r-s); font-size:14px}
 .note.info{background:var(--blue-soft); border:1px solid var(--blue-line); color:var(--blue-ink)}
 .note.warn{background:var(--warn-soft); border:1px solid var(--warn-line); color:var(--warn-ink)}
@@ -142,8 +150,10 @@ const API = "https://api.openligadb.de";
 const LIGEN = {
   bl1:   { name: "1. Bundesliga", kurz: "1. BL",  api: true  },
   bl2:   { name: "2. Bundesliga", kurz: "2. BL",  api: true  },
+  bl3:   { name: "3. Liga",       kurz: "3. L",   api: true  },
   lokal: { name: "Eigene Teams",  kurz: "Eigene", api: false }
 };
+const LIGA_IDS = Object.keys(LIGEN);
 
 function leerZustand(){
   return {
@@ -153,7 +163,7 @@ function leerZustand(){
     deckelCent: null,            // optionale Obergrenze je Spieler, null = keine
     zweck: "Mannschaftskasse",
     spieler: [],                 // {id, name, teamId}
-    teams: [],                   // {id, name, liga, olId}
+    teams: [],                   // {id, name, liga, olId, topf}
     spiele: [],                  // {id, teamId, spieltag, datum, gegner, heim, tore, gegentore, quelle, olId}
     zahlungen: [],               // {id, spielerId, cent, datum, notiz}
     letzterAbruf: null           // ISO-Zeitpunkt des letzten API-Abrufs
@@ -172,6 +182,8 @@ function laden(){
     const z = JSON.parse(roh);
     const d = leerZustand();
     for (const k in d) if (!(k in z)) z[k] = d[k];
+    // Aeltere Staende kannten den Lostopf je Mannschaft noch nicht.
+    z.teams.forEach(t => { if (t.topf === undefined) t.topf = true; });
     return z;
   }catch(e){
     console.warn("Zustand nicht lesbar, starte leer:", e);
@@ -182,8 +194,8 @@ function laden(){
 function erstStart(){
   const z = leerZustand();
   // Die beiden eigenen Mannschaften sind gesetzt – sie kommen aus keiner API.
-  z.teams.push({ id: uid(), name: "FSC Rheda I",  liga: "lokal", olId: null });
-  z.teams.push({ id: uid(), name: "FSC Rheda II", liga: "lokal", olId: null });
+  z.teams.push({ id: uid(), name: "FSC Rheda I",  liga: "lokal", olId: null, topf: true });
+  z.teams.push({ id: uid(), name: "FSC Rheda II", liga: "lokal", olId: null, topf: true });
   return z;
 }
 
@@ -297,7 +309,7 @@ async function teamsLaden(liga){
     if (!name) continue;
     const da = S.teams.find(x => x.liga === liga && (x.olId === olId || x.name === name));
     if (da){ da.name = name; da.olId = olId != null ? olId : da.olId; continue; }
-    S.teams.push({ id: uid(), name, liga, olId: olId != null ? olId : null });
+    S.teams.push({ id: uid(), name, liga, olId: olId != null ? olId : null, topf: liga !== "bl3" });
     neu++;
   }
   return { gesamt: roh.length, neu };
@@ -406,7 +418,7 @@ function teamPille(t){
   return '<span class="pill '+t.liga+'">'+esc(LIGEN[t.liga].kurz)+'</span>';
 }
 function teamAuswahl(name, gewaehlt, leerText){
-  const gruppen = ["bl1","bl2","lokal"].map(l => {
+  const gruppen = LIGA_IDS.map(l => {
     const ts = S.teams.filter(t => t.liga === l).sort((a,b)=>a.name.localeCompare(b.name,"de"));
     if (!ts.length) return "";
     return '<optgroup label="'+esc(LIGEN[l].name)+'">' + ts.map(t =>
@@ -462,7 +474,7 @@ function vStand(){
 /* --------------------------- Auslosung ---------------------------- */
 
 function vLosung(){
-  let h = kopf("Auslosung", "Namen eintragen, Töpfe wählen, ziehen.");
+  let h = kopf("Auslosung", "Namen eintragen, Lostopf zusammenstellen, ziehen.");
 
   h += '<div class="section"><div class="eyebrow">Mitspieler</div>';
   h += '<form class="row" data-form="spielerNeu">'+
@@ -490,22 +502,34 @@ function vLosung(){
   }
   h += '</div>';
 
-  const zaehl = l => S.teams.filter(t => t.liga === l).length;
-  h += '<div class="section"><div class="eyebrow">Lostopf</div>'+
-       '<div class="card pad"><form data-form="losen"><div class="grid g3">'+
-       ["bl1","bl2","lokal"].map(l =>
-         '<label class="chk"><input type="checkbox" name="topf" value="'+l+'"'+(l!=="lokal"?" checked":"")+'>'+
-         esc(LIGEN[l].name)+' <span class="tiny">('+zaehl(l)+')</span></label>').join("")+
-       '</div><hr>'+
+  const drin = S.teams.filter(t => t.topf !== false);
+  h += '<div class="section"><div class="head-row"><div class="eyebrow">Lostopf</div>'+
+       '<span class="tiny">'+drin.length+' '+(drin.length===1?"Mannschaft":"Mannschaften")+' im Topf</span></div>'+
+       '<p class="muted">Angekreuzt wird gezogen. So kommen einzelne Vereine dazu, ohne ihre ganze Liga mitzuschleppen.</p>';
+  LIGA_IDS.forEach(l => {
+    const ts = S.teams.filter(t => t.liga === l).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+    if (!ts.length) return;
+    const an = ts.filter(t => t.topf !== false).length;
+    h += '<div class="card pad"><div class="head-row"><b>'+esc(LIGEN[l].name)+'</b>'+
+         '<span class="row"><span class="tiny">'+an+' von '+ts.length+'</span>'+
+         '<button class="btn btn-ghost btn-sm" data-act="topfAlle" data-liga="'+l+'">alle</button>'+
+         '<button class="btn btn-ghost btn-sm" data-act="topfKeine" data-liga="'+l+'">keine</button></span></div>'+
+         '<div class="chips">'+ ts.map(t =>
+           '<button class="chip'+(t.topf!==false?" an":"")+'" data-act="topfUm" data-id="'+t.id+'">'+esc(t.name)+'</button>'
+         ).join("") +'</div></div>';
+  });
+  if (!S.teams.some(t => t.liga !== "lokal"))
+    h += '<div class="note warn">Es sind erst die eigenen Mannschaften da. Unter <b>Mehr → Mannschaften</b> die Ligen einmal laden.</div>';
+  h += '</div>';
+
+  h += '<div class="section"><div class="eyebrow">Ziehen</div>'+
+       '<div class="card pad"><form data-form="losen">'+
        '<div class="grid g2">'+
        '<label class="chk"><input type="checkbox" name="einmalig" checked>Jede Mannschaft nur einmal vergeben</label>'+
        '<label class="chk"><input type="checkbox" name="alle">Auch schon gezogene Spieler neu losen</label>'+
        '</div><hr>'+
-       '<button class="btn btn-primary btn-block" type="submit">Auslosen</button>'+
-       '</form></div>';
-  if (!zaehl("bl1") && !zaehl("bl2"))
-    h += '<div class="note warn">Für die Bundesliga sind noch keine Mannschaften da. Unter <b>Mehr → Mannschaften</b> einmal laden – oder von Hand eintragen.</div>';
-  h += '</div>';
+       '<button class="btn btn-primary btn-block" type="submit"'+(drin.length?"":" disabled")+'>Auslosen</button>'+
+       '</form></div></div>';
   return h;
 }
 
@@ -520,6 +544,7 @@ function vSpiele(){
        '<div class="btn-row" style="margin-top:12px">'+
        '<button class="btn btn-primary'+(BUSY?" ":"")+'" data-act="abrufen" data-liga="bl1"'+(BUSY?" disabled":"")+'>1. Bundesliga laden</button>'+
        '<button class="btn'+(BUSY?" ":"")+'" data-act="abrufen" data-liga="bl2"'+(BUSY?" disabled":"")+'>2. Bundesliga laden</button>'+
+       '<button class="btn'+(BUSY?" ":"")+'" data-act="abrufen" data-liga="bl3"'+(BUSY?" disabled":"")+'>3. Liga laden</button>'+
        '</div>'+
        (S.letzterAbruf ? '<p class="tiny" style="margin-top:10px">Zuletzt: '+esc(new Date(S.letzterAbruf).toLocaleString("de-DE"))+'</p>' : '')+
        '</div></div>';
@@ -644,13 +669,15 @@ function vMehr(){
        '<div class="btn-row" style="margin-top:12px">'+
        '<button class="btn btn-primary" data-act="teamsHolen" data-liga="bl1"'+(BUSY?" disabled":"")+'>1. Bundesliga laden</button>'+
        '<button class="btn" data-act="teamsHolen" data-liga="bl2"'+(BUSY?" disabled":"")+'>2. Bundesliga laden</button>'+
-       '</div><hr>'+
+       '<button class="btn" data-act="teamsHolen" data-liga="bl3"'+(BUSY?" disabled":"")+'>3. Liga laden</button>'+
+       '</div>'+
+       '<p class="tiny" style="margin-top:10px">Aus der 3. Liga liegt danach zunächst <b>keine</b> Mannschaft im Lostopf – unter <b>Auslosung</b> die gewünschte ankreuzen, etwa den SC Verl.</p><hr>'+
        '<form class="row" data-form="teamNeu">'+
        '<input type="text" name="name" placeholder="Eigene Mannschaft, z. B. FSC Rheda III" style="flex:1; min-width:200px" required>'+
        '<button class="btn btn-sm" type="submit">Anlegen</button></form>'+
        '</div>';
 
-  ["bl1","bl2","lokal"].forEach(l => {
+  LIGA_IDS.forEach(l => {
     const ts = S.teams.filter(t => t.liga === l).sort((a,b)=>a.name.localeCompare(b.name,"de"));
     if (!ts.length) return;
     h += '<div class="card pad"><div class="head-row"><b>'+esc(LIGEN[l].name)+'</b>'+
@@ -660,6 +687,7 @@ function vMehr(){
       h += '<div class="item"><div class="grow"><b>'+esc(t.name)+'</b>'+
         '<span class="tiny">'+gegentoreVonTeam(t.id)+' Gegentore · '+spieleVonTeam(t.id).length+' Spiele'+
         (belegt ? ' · gezogen von '+esc(belegt.name) : '')+'</span></div>'+
+        (t.topf !== false ? '<span class="pill '+t.liga+'">im Topf</span>' : '')+
         '<button class="btn btn-ghost btn-sm" data-act="teamWeg" data-id="'+t.id+'">löschen</button></div>';
     });
     h += '</div></div>';
@@ -718,6 +746,16 @@ document.addEventListener("click", async ev => {
     S.teams = S.teams.filter(x => x.id !== id);
     S.spiele = S.spiele.filter(s => s.teamId !== id);
     S.spieler.forEach(sp => { if (sp.teamId === id) sp.teamId = null; });
+    sichern(); zeichnen(); return;
+  }
+  if (act === "topfUm"){
+    const t = team(id);
+    if (t){ t.topf = (t.topf === false); sichern(); zeichnen(); }
+    return;
+  }
+  if (act === "topfAlle" || act === "topfKeine"){
+    const liga = el.getAttribute("data-liga"), an = act === "topfAlle";
+    S.teams.forEach(t => { if (t.liga === liga) t.topf = an; });
     sichern(); zeichnen(); return;
   }
   if (act === "zahlOffen"){
@@ -808,12 +846,11 @@ document.addEventListener("submit", ev => {
     zeichnen(); return;
   }
   if (art === "losen"){
-    const toepfe = new FormData(f).getAll("topf");
     const einmalig = !!d.einmalig, alle = !!d.alle;
-    if (!toepfe.length){ flash("warn","Kein Lostopf gewählt."); zeichnen(); return; }
     const ziehen = alle ? S.spieler.slice() : S.spieler.filter(sp => !sp.teamId);
     if (!ziehen.length){ flash("warn","Alle haben schon eine Mannschaft. Zum Neuziehen den Haken setzen."); zeichnen(); return; }
-    let topf = S.teams.filter(t => toepfe.includes(t.liga));
+    let topf = S.teams.filter(t => t.topf !== false);
+    if (!topf.length){ flash("warn","Im Lostopf ist keine Mannschaft angekreuzt."); zeichnen(); return; }
     if (einmalig && !alle){
       const vergeben = new Set(S.spieler.filter(sp => sp.teamId).map(sp => sp.teamId));
       topf = topf.filter(t => !vergeben.has(t.id));
@@ -874,7 +911,7 @@ document.addEventListener("submit", ev => {
     if (S.teams.some(t => t.name.toLowerCase() === name.toLowerCase())){
       flash("warn","Diese Mannschaft gibt es schon."); zeichnen(); return;
     }
-    S.teams.push({ id: uid(), name, liga: "lokal", olId: null });
+    S.teams.push({ id: uid(), name, liga: "lokal", olId: null, topf: true });
     sichern(); flash("ok",name+" angelegt."); zeichnen(); return;
   }
 });
