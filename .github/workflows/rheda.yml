@@ -1,17 +1,21 @@
-name: FSC Rheda Ergebnisse
+name: FSC Rheda Spielplan
 
 on:
+  schedule:
+    # Taeglich um 05:30 UTC. Die Amateurergebnisse stehen ohnehin erst
+    # dann drin, wenn sie jemand in DFBnet eingetragen hat.
+    - cron: "30 5 * * *"
   workflow_dispatch:
     inputs:
       modus:
-        description: "diagnose = nur nachsehen, was fussball.de liefert"
+        description: "pruefen = nur anzeigen, holen = schreiben und einchecken"
         required: true
-        default: diagnose
+        default: pruefen
         type: choice
-        options: [diagnose]
+        options: [pruefen, holen]
 
 jobs:
-  lauf:
+  spielplan:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,7 +23,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Erkunden
-        if: ${{ inputs.modus == 'diagnose' }}
-        run: node werkzeug/diagnose.mjs
+          node-version: "22"
+
+      - name: Prüflauf
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.modus == 'pruefen' }}
+        run: node werkzeug/rheda-holen.mjs --pruefen
+
+      - name: Spielplan holen
+        if: ${{ github.event_name == 'schedule' || inputs.modus == 'holen' }}
+        run: node werkzeug/rheda-holen.mjs
+
+      - name: Änderung einchecken
+        if: ${{ github.event_name == 'schedule' || inputs.modus == 'holen' }}
+        run: |
+          if git diff --quiet -- daten/rheda.json; then
+            echo "Keine Änderung am Spielplan."
+            exit 0
+          fi
+          git config user.name  "FSC-Rheda-Spielplan"
+          git config user.email "actions@github.com"
+          git add daten/rheda.json
+          git commit -m "Spielplan FSC Rheda vom $(date -u +%d.%m.%Y) übernommen"
+          git push
