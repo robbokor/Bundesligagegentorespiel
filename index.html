@@ -164,7 +164,7 @@ function leerZustand(){
     zweck: "Mannschaftskasse",
     spieler: [],                 // {id, name, teamId}
     teams: [],                   // {id, name, liga, olId, topf}
-    spiele: [],                  // {id, teamId, spieltag, datum, gegner, heim, tore, gegentore, quelle, olId}
+    spiele: [],                  // {id, teamId, spieltag, datum, gegner, heim, tore, gegentore, quelle, olId, wettbewerb}
     zahlungen: [],               // {id, spielerId, cent, datum, notiz}
     letzterAbruf: null           // ISO-Zeitpunkt des letzten API-Abrufs
   };
@@ -238,12 +238,21 @@ function flash(art, text){ FLASH = {art, text}; }
  * Rechnen                                                             *
  * ------------------------------------------------------------------ */
 
+const WETTBEWERBE = { liga:"Liga", pokal:"Pokal", freund:"Freundschaftsspiel" };
+// Gezahlt wird nur fuer Ligaspiele. Pokal und Freundschaftsspiele duerfen
+// erfasst werden, zaehlen aber nicht mit. Aeltere Eintraege ohne Angabe
+// sind Ligaspiele: etwas anderes liess sich frueher gar nicht eintragen.
+function zaehlt(s){ return (s.wettbewerb || "liga") === "liga"; }
+
 function spieleVonTeam(teamId){
   return S.spiele.filter(s => s.teamId === teamId)
                  .sort((a,b) => String(a.datum||"").localeCompare(String(b.datum||"")));
 }
 function gegentoreVonTeam(teamId){
-  return S.spiele.reduce((n,s) => s.teamId === teamId ? n + (s.gegentore||0) : n, 0);
+  return S.spiele.reduce((n,s) => (s.teamId === teamId && zaehlt(s)) ? n + (s.gegentore||0) : n, 0);
+}
+function ligaSpieleVonTeam(teamId){
+  return S.spiele.reduce((n,s) => (s.teamId === teamId && zaehlt(s)) ? n+1 : n, 0);
 }
 function bezahltVon(spielerId){
   return S.zahlungen.reduce((n,z) => z.spielerId === spielerId ? n + (z.cent||0) : n, 0);
@@ -260,7 +269,7 @@ function tabelle(){
     return {
       sp,
       tore: sp.teamId ? gegentoreVonTeam(sp.teamId) : 0,
-      spiele: sp.teamId ? spieleVonTeam(sp.teamId).length : 0,
+      spiele: sp.teamId ? ligaSpieleVonTeam(sp.teamId) : 0,
       soll, ist, offen: soll - ist
     };
   }).sort((a,b) => b.tore - a.tore || a.sp.name.localeCompare(b.sp.name,"de"));
@@ -374,9 +383,9 @@ async function ergebnisseLaden(liga){
     const olId  = feld(m,"matchID","matchId");
     gewertet++;
     if (a) frisch.push({ id: uid(), teamId: a.id, spieltag, datum, gegner: feld(t2,"teamName")||"?",
-                         heim: true,  tore: erg[0], gegentore: erg[1], quelle: "api", olId });
+                         heim: true,  tore: erg[0], gegentore: erg[1], quelle: "api", olId, wettbewerb: "liga" });
     if (b) frisch.push({ id: uid(), teamId: b.id, spieltag, datum, gegner: feld(t1,"teamName")||"?",
-                         heim: false, tore: erg[1], gegentore: erg[0], quelle: "api", olId });
+                         heim: false, tore: erg[1], gegentore: erg[0], quelle: "api", olId, wettbewerb: "liga" });
   }
 
   S.spiele = behalten.concat(frisch);
@@ -557,6 +566,10 @@ function vSpiele(){
        '</div><div class="grid g3" style="margin-top:12px">'+
        '<label class="f">Eigene Tore<input type="number" name="tore" min="0" step="1" value="0"></label>'+
        '<label class="f">Gegentore<input type="number" name="gegentore" min="0" step="1" value="0" required></label>'+
+       '<label class="f">Wettbewerb<select name="wettbewerb">'+
+         Object.keys(WETTBEWERBE).map(k => '<option value="'+k+'">'+esc(WETTBEWERBE[k])+'</option>').join("")+
+       '</select></label>'+
+       '</div><div class="grid g3" style="margin-top:12px">'+
        '<label class="f">Spieltag<input type="number" name="spieltag" min="1" step="1" placeholder="optional"></label>'+
        '</div><hr><button class="btn btn-primary btn-block" type="submit">Spiel eintragen</button>'+
        '</form></div></div>';
@@ -566,20 +579,23 @@ function vSpiele(){
     .sort((a,b) => String(b.datum||"").localeCompare(String(a.datum||"")));
 
   h += '<div class="section"><div class="head-row"><div class="eyebrow">Spiele der gezogenen Mannschaften</div>'+
-       '<span class="tiny">'+relevant.length+' von '+S.spiele.length+' erfassten Spielen</span></div>';
+       '<span class="tiny">'+relevant.length+' von '+S.spiele.length+' erfassten Spielen</span></div>'+
+       '<p class="tiny">Gezahlt wird nur für Ligaspiele. Pokal und Freundschaftsspiele dürfen mit hinein, bleiben aber außen vor.</p>';
   if (!relevant.length){
     h += '<p class="muted">Noch nichts da – oder es ist noch keine Mannschaft gezogen.</p>';
   } else {
     h += '<div class="card"><div class="tbl-wrap"><table><thead><tr>'+
-         '<th>Datum</th><th>Mannschaft</th><th>Gegner</th><th class="r">Erg.</th>'+
+         '<th>Datum</th><th>Mannschaft</th><th>Gegner</th><th>Wettbewerb</th><th class="r">Erg.</th>'+
          '<th class="r">Gegentore</th><th>Quelle</th><th></th></tr></thead><tbody>';
     relevant.slice(0,200).forEach(s => {
-      h += '<tr>'+
+      const w = s.wettbewerb || "liga", mit = zaehlt(s);
+      h += '<tr'+(mit?'':' style="color:var(--ink-3)"')+'>'+
         '<td class="num">'+esc(datumKurz(s.datum))+(s.spieltag?' <span class="tiny">('+s.spieltag+'.)</span>':'')+'</td>'+
         '<td><b>'+esc(teamName(s.teamId))+'</b></td>'+
         '<td>'+esc(s.gegner||"—")+(s.heim===false?' <span class="tiny">(a)</span>':'')+'</td>'+
+        '<td>'+(mit ? '<span class="pill bl1">Liga</span>' : '<span class="pill">'+esc(WETTBEWERBE[w]||w)+'</span>')+'</td>'+
         '<td class="r num">'+(s.tore==null?"–":s.tore)+':'+(s.gegentore==null?"–":s.gegentore)+'</td>'+
-        '<td class="r num"><b>'+(s.gegentore||0)+'</b></td>'+
+        '<td class="r num">'+(mit ? '<b>'+(s.gegentore||0)+'</b>' : '<span class="tiny">zählt nicht</span>')+'</td>'+
         '<td><span class="pill">'+(s.quelle==="api"?"Abruf":"Hand")+'</span></td>'+
         '<td class="r"><button class="btn btn-ghost btn-sm" data-act="spielWeg" data-id="'+s.id+'">löschen</button></td>'+
         '</tr>';
@@ -705,7 +721,8 @@ function vMehr(){
 
   h += '<div class="note info">Gespielt wird so: Jeder zieht zu Saisonbeginn eine Mannschaft. '+
        'Für jedes Gegentor seiner Mannschaft zahlt er '+esc(euro(S.betragCent))+' in die Kasse. '+
-       'Wer am Saisonende die meisten Gegentore gesammelt hat, zahlt am meisten.</div>';
+       'Wer am Saisonende die meisten Gegentore gesammelt hat, zahlt am meisten. '+
+       'Gezählt werden nur Ligaspiele – Pokal und Freundschaftsspiele bleiben außen vor.</div>';
   return h;
 }
 
@@ -884,9 +901,14 @@ document.addEventListener("submit", ev => {
       heim: true,
       tore: parseInt(d.tore,10) || 0,
       gegentore: geg,
+      wettbewerb: WETTBEWERBE[d.wettbewerb] ? d.wettbewerb : "liga",
       quelle: "hand", olId: null
     });
-    sichern(); flash("ok","Spiel eingetragen: "+geg+" Gegentore für "+teamName(d.teamId)+"."); zeichnen(); return;
+    sichern();
+    flash("ok", d.wettbewerb === "liga"
+      ? "Spiel eingetragen: "+geg+" Gegentore für "+teamName(d.teamId)+"."
+      : WETTBEWERBE[d.wettbewerb]+" eingetragen – zählt nicht für die Kasse.");
+    zeichnen(); return;
   }
   if (art === "zahlungNeu"){
     const cent = centAus(d.betrag);
