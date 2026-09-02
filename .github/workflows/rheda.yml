@@ -1,0 +1,25 @@
+name: FSC Rheda Ergebnisse
+
+on:
+  workflow_dispatch:
+    inputs:
+      modus:
+        description: "diagnose = nur nachsehen, was fussball.de liefert"
+        required: true
+        default: diagnose
+        type: choice
+        options: [diagnose]
+
+jobs:
+  lauf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Erkunden
+        if: ${{ inputs.modus == 'diagnose' }}
+        run: node werkzeug/diagnose.mjs
