@@ -55,6 +55,26 @@ Pokal- und Freundschaftsspiele erkennt der Abruf am Kürzel der Spielnummer
 Meisterschaft. Ein einmal von Hand eingetragenes Ergebnis überschreibt kein
 späterer Abruf.
 
+## Den Stand weitergeben
+
+Unter *Stand → Weitergeben*:
+
+* **Liste für WhatsApp** legt die Rangliste als Text in die Zwischenablage –
+  einfügen und abschicken.
+* **Link zum Zeigen** erzeugt eine Adresse, in der der Stand selbst steckt. Wer
+  sie öffnet, sieht die Rangliste als Momentaufnahme, sonst nichts: kein
+  Eintragen, kein Zugriff auf die Kasse, und auf seinem Gerät wird nichts
+  gespeichert. Der Link rechnet nicht mit – nach einem neuen Spieltag braucht es
+  einen neuen.
+
+Im Link stehen die Namen der Mitspieler. Wer ihn hat, sieht sie.
+
+## Neue Saison
+
+*Mehr → Sicherung → Neue Saison beginnen* behält Mitspieler und Mannschaften,
+löscht Ergebnisse und Kasse und stellt die Saison ein Jahr weiter. Danach neu
+auslosen. *Alles löschen* daneben räumt restlos ab.
+
 ## Wo die Daten liegen
 
 **Nicht hier.** Mitspieler, Ergebnisse und Kasse entstehen ausschließlich im

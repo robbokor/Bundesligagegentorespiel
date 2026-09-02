@@ -175,6 +175,7 @@ let S = laden();
 let VIEW = "stand";
 let FLASH = null;                // {art, text} – einmalige Rueckmeldung
 let BUSY = false;
+let LETZTER_TEXT = null;              // Ersatzweg, wenn die Zwischenablage sich sperrt
 
 function laden(){
   try{
@@ -455,6 +456,104 @@ function planAlter(){
 }
 
 /* ------------------------------------------------------------------ *
+ * Weitergeben                                                          *
+ *                                                                      *
+ * Die Daten liegen nur auf diesem Geraet. Wer den Stand sehen soll,    *
+ * bekommt ihn als Text fuer die Gruppe oder als Link, in dem der Stand *
+ * selbst steckt - eine Momentaufnahme, kein Zugriff auf die Kasse.     *
+ * ------------------------------------------------------------------ */
+
+function b64ein(text){
+  let roh = "";
+  new TextEncoder().encode(text).forEach(b => roh += String.fromCharCode(b));
+  return btoa(roh).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function b64aus(t){
+  const roh = atob(t.replace(/-/g,"+").replace(/_/g,"/"));
+  return new TextDecoder().decode(Uint8Array.from(roh, c => c.charCodeAt(0)));
+}
+
+function standAlsText(){
+  const t = tabelle(), su = summe();
+  const zeilen = [
+    "Gegentorespiel " + saisonLabel() + " · " + euro(S.betragCent) + " je Gegentor",
+    "Stand " + new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"}),
+    ""
+  ];
+  if (!t.length) zeilen.push("Noch keine Mitspieler.");
+  t.forEach((r,i) => {
+    zeilen.push((i+1) + ". " + r.sp.name + " – " + (team(r.sp.teamId) ? teamName(r.sp.teamId) : "keine Mannschaft") +
+      " – " + r.tore + (r.tore === 1 ? " Gegentor" : " Gegentore") +
+      " – " + euro(r.soll) + (r.offen > 0 ? "" : " (bezahlt)"));
+  });
+  zeilen.push("");
+  zeilen.push("Topf: " + euro(su.soll) + " · davon bezahlt " + euro(su.ist) + " · offen " + euro(su.offen));
+  return zeilen.join("\n");
+}
+
+function teilLink(){
+  const t = tabelle();
+  const kurz = {
+    v: 1, s: S.saison, b: S.betragCent, z: S.zweck || "",
+    d: new Date().toISOString().slice(0,10),
+    r: t.map(r => [r.sp.name, r.sp.teamId ? teamName(r.sp.teamId) : "", r.tore, r.soll, r.offen])
+  };
+  const basis = location.href.split("#")[0];
+  return basis + "#stand=" + b64ein(JSON.stringify(kurz));
+}
+
+async function inZwischenablage(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    return true;
+  }catch(e){
+    const f = document.createElement("textarea");
+    f.value = text; f.style.position = "fixed"; f.style.opacity = "0";
+    document.body.appendChild(f); f.select();
+    let ok = false;
+    try{ ok = document.execCommand("copy"); }catch(e2){}
+    document.body.removeChild(f);
+    return ok;
+  }
+}
+
+// Wird die Seite mit einem Stand im Adresszusatz geoeffnet, zeigt sie nur
+// diesen an. Nichts wird gelesen, nichts gespeichert - die eigenen Daten
+// des Betrachters bleiben unberuehrt.
+function geteilterStand(){
+  const m = location.hash.match(/^#stand=(.+)$/);
+  if (!m) return null;
+  try{
+    const d = JSON.parse(b64aus(m[1]));
+    return (d && d.v === 1 && Array.isArray(d.r)) ? d : null;
+  }catch(e){ return null; }
+}
+
+function zeigeGeteilt(d){
+  const eur = c => ((c||0)/100).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+  const jahr = parseInt(d.s,10);
+  const soll = d.r.reduce((n,r) => n + (r[3]||0), 0);
+  document.querySelector("#nav").remove();
+  document.querySelector("#topMeta").innerHTML =
+    "Saison " + esc(jahr ? jahr + "/" + String(jahr+1).slice(-2) : d.s) + "<br>" + esc(eur(d.b)) + " je Gegentor";
+  let h = '<div class="stack">'+
+    '<div><h1 class="screen-title">Stand</h1>'+
+    '<p class="screen-sub">'+esc(d.z || "Gegentorespiel")+'</p></div>'+
+    '<div class="note info">Momentaufnahme vom '+esc(datumKurz(d.d))+'. Diese Seite rechnet nicht mit – '+
+    'für den aktuellen Stand braucht es einen neuen Link.</div>'+
+    '<div class="card"><div class="tbl-wrap"><table><thead><tr><th></th><th>Spieler</th>'+
+    '<th>Mannschaft</th><th class="r">Gegentore</th><th class="r">fällig</th></tr></thead><tbody>';
+  d.r.forEach((r,i) => {
+    h += '<tr><td><span class="rank'+(i===0 && r[2]>0?" top":"")+'">'+(i+1)+'</span></td>'+
+      '<td><b>'+esc(r[0])+'</b></td><td>'+esc(r[1]||"—")+'</td>'+
+      '<td class="r num"><b>'+(r[2]||0)+'</b></td><td class="r num">'+esc(eur(r[3]))+'</td></tr>';
+  });
+  h += '</tbody></table></div></div>'+
+    '<p class="tiny">Topf insgesamt '+esc(eur(soll))+'.</p></div>';
+  document.querySelector("#view").innerHTML = h;
+}
+
+/* ------------------------------------------------------------------ *
  * Ansichten                                                           *
  * ------------------------------------------------------------------ */
 
@@ -474,7 +573,11 @@ function zeichnen(){
   const bau = { stand: vStand, losung: vLosung, spiele: vSpiele, kasse: vKasse, mehr: vMehr }[VIEW] || vStand;
   const meldung = FLASH ? '<div class="note '+FLASH.art+'">'+esc(FLASH.text)+'</div>' : "";
   FLASH = null;
-  $("#view").innerHTML = '<div class="stack">' + meldung + bau() + '</div>';
+  const ersatz = LETZTER_TEXT
+    ? '<div class="card pad"><p class="eyebrow">Zum Markieren und Kopieren</p>'+
+      '<textarea rows="10" style="margin-top:8px" readonly>'+esc(LETZTER_TEXT)+'</textarea></div>' : "";
+  LETZTER_TEXT = null;
+  $("#view").innerHTML = '<div class="stack">' + meldung + ersatz + bau() + '</div>';
   window.scrollTo(0,0);
 }
 function gehe(v){ VIEW = v; zeichnen(); }
@@ -532,6 +635,16 @@ function vStand(){
       '</tr>';
   });
   h += '</tbody></table></div></div>';
+
+  h += '<div class="section"><div class="eyebrow">Weitergeben</div>'+
+       '<div class="card pad"><p class="muted">Die Daten liegen nur auf diesem Gerät. Für die Gruppe gibt es den Stand '+
+       'als Text oder als Link, in dem der Stand selbst steckt – eine Momentaufnahme, kein Zugriff auf die Kasse.</p>'+
+       '<div class="btn-row" style="margin-top:12px">'+
+       '<button class="btn btn-primary" data-act="textKopieren">Liste für WhatsApp</button>'+
+       '<button class="btn" data-act="linkKopieren">Link zum Zeigen</button>'+
+       '</div>'+
+       '<p class="tiny" style="margin-top:10px">Im Link stehen die Namen der Mitspieler. Wer ihn hat, sieht den Stand.</p>'+
+       '</div></div>';
 
   if (S.deckelCent != null)
     h += '<p class="tiny">Gedeckelt auf höchstens '+esc(euro(S.deckelCent))+' je Spieler.</p>';
@@ -814,8 +927,13 @@ function vMehr(){
        '<div class="btn-row" style="margin-top:12px">'+
        '<button class="btn btn-primary" data-act="export">Sicherung speichern</button>'+
        '<button class="btn" data-act="importAn">Sicherung einlesen</button>'+
+       '<button class="btn" data-act="neueSaison">Neue Saison beginnen</button>'+
        '<button class="btn btn-danger" data-act="reset">Alles löschen</button>'+
-       '</div><input type="file" id="importFeld" accept="application/json,.json" class="hide">'+
+       '</div>'+
+       '<p class="tiny" style="margin-top:10px"><b>Neue Saison</b> behält Mitspieler und Mannschaften, '+
+       'löscht Ergebnisse und Kasse und stellt die Saison ein Jahr weiter. '+
+       '<b>Alles löschen</b> räumt restlos ab.</p>'+
+       '<input type="file" id="importFeld" accept="application/json,.json" class="hide">'+
        '</div></div>';
 
   h += '<div class="note info">Gespielt wird so: Jeder zieht zu Saisonbeginn eine Mannschaft. '+
@@ -924,6 +1042,30 @@ document.addEventListener("click", async ev => {
     return;
   }
   if (act === "importAn"){ $("#importFeld").click(); return; }
+  if (act === "textKopieren" || act === "linkKopieren"){
+    const text = act === "textKopieren" ? standAlsText() : teilLink();
+    if (navigator.share){
+      try{ await navigator.share({ text }); return; }catch(e){ /* abgebrochen: weiter kopieren */ }
+    }
+    const ok = await inZwischenablage(text);
+    flash(ok ? "ok" : "warn", ok
+      ? (act === "textKopieren" ? "Liste kopiert – in WhatsApp einfügen." : "Link kopiert.")
+      : "Kopieren hat nicht geklappt. Der Text steht unten zum Markieren.");
+    if (!ok) LETZTER_TEXT = text;
+    zeichnen(); return;
+  }
+  if (act === "neueSaison"){
+    const naechste = String((parseInt(S.saison,10) || new Date().getFullYear()) + 1);
+    if (!confirm("Neue Saison " + naechste + " beginnen?\n\nMitspieler und Mannschaften bleiben, " +
+                 "Ergebnisse und Kasse werden gelöscht. Vorher sichern!")) return;
+    S.saison = naechste;
+    S.spiele = []; S.zahlungen = [];
+    S.letzterAbruf = null; S.planStand = null;
+    S.spieler.forEach(sp => sp.teamId = null);
+    sichern(); VIEW = "losung";
+    flash("ok","Saison " + naechste + " steht. Jetzt neu auslosen.");
+    zeichnen(); return;
+  }
   if (act === "reset"){
     if (confirm("Wirklich alles löschen? Spieler, Mannschaften, Ergebnisse und Kasse sind dann weg.") &&
         confirm("Letzte Nachfrage: Es gibt kein Zurück ohne Sicherung.")){
@@ -1062,5 +1204,6 @@ document.addEventListener("submit", ev => {
   }
 });
 
-zeichnen();
+const GETEILT = geteilterStand();
+if (GETEILT) zeigeGeteilt(GETEILT); else zeichnen();
 </script>
