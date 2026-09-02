@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gegentore">
+<meta name="theme-color" content="#12211A">
+<meta name="color-scheme" content="light">
+<title>Gegentorespiel</title>
+<style>
+/* Gegentorespiel · eine Datei, kein Server, keine Abhaengigkeiten.
+   Alle Daten liegen im localStorage des Geraets. */
+:root{
+  --paper:#F5F6F3; --sunk:#EBEDE8; --card:#FFFFFF; --card-2:#FAFBF9;
+  --ink:#1E2B24; --ink-2:#5F6E66; --ink-3:#8C978F;
+  --line:#E2E6DF; --line-strong:#CBD2C7;
+  --grass:#2F7D53; --grass-hover:#276945; --grass-soft:#E7F2EB; --grass-line:#C4DFD0;
+  --warn-soft:#FBEEDD; --warn-line:#EFD5B0; --warn-ink:#8A5A19;
+  --bad-soft:#FBE6E6; --bad-line:#F0C6C6; --bad-ink:#95383F;
+  --blue-soft:#E8EFF6; --blue-line:#CBDCEB; --blue-ink:#37587A;
+  --shadow:0 1px 2px rgba(30,43,36,.05), 0 10px 24px -18px rgba(30,43,36,.35);
+  --r-s:10px; --r-m:16px; --r-l:22px;
+  --ui:"Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--ui);
+  font-size:16px; line-height:1.5; -webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer; background:none; border:none; padding:0; text-align:left}
+:focus-visible{outline:3px solid var(--grass); outline-offset:2px; border-radius:6px}
+h1,h2,h3{margin:0; line-height:1.25}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+.app{display:grid; grid-template-rows:auto minmax(0,1fr) auto; height:100dvh}
+.topbar{display:flex; align-items:center; gap:12px; padding:12px 18px;
+  background:var(--card); border-bottom:1px solid var(--line)}
+.wordmark{font-weight:700; font-size:19px; color:var(--grass); display:flex; align-items:center; gap:9px}
+.wordmark .ball{width:13px; height:13px; border-radius:50%; background:var(--grass)}
+.topbar .spacer{flex:1}
+.topbar .meta{color:var(--ink-2); font-size:13px; text-align:right}
+main{overflow-y:auto; overscroll-behavior:contain}
+.wrap{max-width:960px; margin:0 auto; padding:22px 18px 44px}
+.nav{display:grid; grid-template-columns:repeat(5,1fr); gap:4px; background:var(--card);
+  border-top:1px solid var(--line); padding:7px 8px calc(7px + env(safe-area-inset-bottom))}
+.nav button{padding:10px 4px; border-radius:var(--r-s); color:var(--ink-2);
+  font-size:13px; font-weight:600; text-align:center}
+.nav button[aria-current="page"]{color:#fff; background:var(--grass)}
+
+.stack{display:flex; flex-direction:column; gap:18px}
+.section{display:flex; flex-direction:column; gap:10px}
+.screen-title{font-size:25px; font-weight:700; letter-spacing:-.01em}
+.screen-sub{color:var(--ink-2); font-size:14.5px; margin-top:3px}
+.eyebrow{font-size:13px; font-weight:700; color:var(--ink-2); text-transform:uppercase; letter-spacing:.05em}
+.head-row{display:flex; align-items:flex-end; justify-content:space-between; gap:14px; flex-wrap:wrap}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--r-m); box-shadow:var(--shadow)}
+.pad{padding:16px 18px}
+.muted{color:var(--ink-2); font-size:14px}
+.tiny{font-size:12.5px; color:var(--ink-3)}
+
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:11px 18px; border-radius:999px; font-weight:700; font-size:15px;
+  border:1px solid var(--line-strong); background:var(--card); min-height:46px}
+.btn:hover{background:var(--sunk)}
+.btn-primary{background:var(--grass); border-color:var(--grass); color:#fff}
+.btn-primary:hover{background:var(--grass-hover)}
+.btn-danger{color:var(--bad-ink); border-color:var(--bad-line); background:var(--bad-soft)}
+.btn-ghost{border-color:transparent; background:transparent; color:var(--grass)}
+.btn-ghost:hover{background:var(--grass-soft)}
+.btn-sm{min-height:38px; padding:6px 14px; font-size:14px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.45; cursor:not-allowed}
+.btn-row{display:flex; gap:9px; flex-wrap:wrap}
+
+label.f{display:flex; flex-direction:column; gap:5px; font-size:13.5px; font-weight:600; color:var(--ink-2)}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  padding:10px 12px; border:1px solid var(--line-strong); border-radius:var(--r-s);
+  background:var(--card); min-height:44px; width:100%}
+.grid{display:grid; gap:12px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:620px){ .g2,.g3,.g4{grid-template-columns:1fr} .wrap{padding:18px 14px 40px} }
+
+table{width:100%; border-collapse:collapse; font-size:14.5px}
+th,td{padding:9px 10px; text-align:left; border-bottom:1px solid var(--line)}
+th{font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-2)}
+td.r,th.r{text-align:right}
+tr:last-child td{border-bottom:none}
+.tbl-wrap{overflow-x:auto}
+
+.pill{display:inline-block; padding:2px 9px; border-radius:999px; font-size:12px; font-weight:700;
+  background:var(--sunk); color:var(--ink-2); white-space:nowrap}
+.pill.bl1{background:var(--grass-soft); color:var(--grass); border:1px solid var(--grass-line)}
+.pill.bl2{background:var(--blue-soft); color:var(--blue-ink); border:1px solid var(--blue-line)}
+.pill.lokal{background:var(--warn-soft); color:var(--warn-ink); border:1px solid var(--warn-line)}
+.note{padding:12px 14px; border-radius:var(--r-s); font-size:14px}
+.note.info{background:var(--blue-soft); border:1px solid var(--blue-line); color:var(--blue-ink)}
+.note.warn{background:var(--warn-soft); border:1px solid var(--warn-line); color:var(--warn-ink)}
+.note.bad{background:var(--bad-soft); border:1px solid var(--bad-line); color:var(--bad-ink)}
+.note.ok{background:var(--grass-soft); border:1px solid var(--grass-line); color:var(--grass)}
+.kpi{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+.kpi .k{background:var(--card); border:1px solid var(--line); border-radius:var(--r-m); padding:14px 16px}
+.kpi .k b{display:block; font-size:24px; letter-spacing:-.01em}
+.kpi .k span{font-size:12.5px; color:var(--ink-2)}
+@media(max-width:620px){ .kpi{grid-template-columns:1fr 1fr} }
+.row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.list{display:flex; flex-direction:column; gap:8px}
+.item{display:flex; align-items:center; gap:12px; padding:11px 14px; border:1px solid var(--line);
+  border-radius:var(--r-s); background:var(--card)}
+.item .grow{flex:1; min-width:0}
+.item .grow b{display:block}
+.rank{width:26px; height:26px; border-radius:50%; background:var(--sunk); color:var(--ink-2);
+  display:grid; place-items:center; font-size:13px; font-weight:700; flex:none}
+.rank.top{background:var(--bad-soft); color:var(--bad-ink)}
+.chk{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600}
+.chk input{width:20px; height:20px; min-height:0}
+hr{border:none; border-top:1px solid var(--line); margin:4px 0}
+.hide{display:none !important}
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <div class="wordmark"><span class="ball"></span>Gegentorespiel</div>
+    <div class="spacer"></div>
+    <div class="meta" id="topMeta"></div>
+  </header>
+  <main><div class="wrap" id="view"></div></main>
+  <nav class="nav" id="nav" aria-label="Bereiche"></nav>
+</div>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------ *
+ * Zustand                                                             *
+ * ------------------------------------------------------------------ */
+
+const LS_KEY = "gegentorespiel.v1";
+const API = "https://api.openligadb.de";
+
+const LIGEN = {
+  bl1:   { name: "1. Bundesliga", kurz: "1. BL",  api: true  },
+  bl2:   { name: "2. Bundesliga", kurz: "2. BL",  api: true  },
+  lokal: { name: "Eigene Teams",  kurz: "Eigene", api: false }
+};
+
+function leerZustand(){
+  return {
+    version: 1,
+    saison: "2026",              // OpenLigaDB zaehlt die Saison nach dem Startjahr
+    betragCent: 100,             // Einsatz je Gegentor
+    deckelCent: null,            // optionale Obergrenze je Spieler, null = keine
+    zweck: "Mannschaftskasse",
+    spieler: [],                 // {id, name, teamId}
+    teams: [],                   // {id, name, liga, olId}
+    spiele: [],                  // {id, teamId, spieltag, datum, gegner, heim, tore, gegentore, quelle, olId}
+    zahlungen: [],               // {id, spielerId, cent, datum, notiz}
+    letzterAbruf: null           // ISO-Zeitpunkt des letzten API-Abrufs
+  };
+}
+
+let S = laden();
+let VIEW = "stand";
+let FLASH = null;                // {art, text} – einmalige Rueckmeldung
+let BUSY = false;
+
+function laden(){
+  try{
+    const roh = localStorage.getItem(LS_KEY);
+    if (!roh) return erstStart();
+    const z = JSON.parse(roh);
+    const d = leerZustand();
+    for (const k in d) if (!(k in z)) z[k] = d[k];
+    return z;
+  }catch(e){
+    console.warn("Zustand nicht lesbar, starte leer:", e);
+    return erstStart();
+  }
+}
+
+function erstStart(){
+  const z = leerZustand();
+  // Die beiden eigenen Mannschaften sind gesetzt – sie kommen aus keiner API.
+  z.teams.push({ id: uid(), name: "FSC Rheda I",  liga: "lokal", olId: null });
+  z.teams.push({ id: uid(), name: "FSC Rheda II", liga: "lokal", olId: null });
+  return z;
+}
+
+function sichern(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
+  catch(e){ alert("Speichern fehlgeschlagen: " + e.message); }
+}
+
+/* ------------------------------------------------------------------ *
+ * Kleinkram                                                           *
+ * ------------------------------------------------------------------ */
+
+const $ = s => document.querySelector(s);
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function euro(cent){
+  const v = (cent||0)/100;
+  return v.toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+}
+function centAus(text){
+  const t = String(text||"").replace(/\s|€/g,"").replace(",",".");
+  const v = parseFloat(t);
+  return isFinite(v) ? Math.round(v*100) : null;
+}
+function datumKurz(iso){
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return String(iso).slice(0,10);
+  return d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"2-digit"});
+}
+function heute(){ return new Date().toISOString().slice(0,10); }
+function team(id){ return S.teams.find(t => t.id === id) || null; }
+function teamName(id){ const t = team(id); return t ? t.name : "—"; }
+function saisonLabel(){ const a = parseInt(S.saison,10); return a ? a + "/" + String(a+1).slice(-2) : S.saison; }
+
+function flash(art, text){ FLASH = {art, text}; }
+
+/* ------------------------------------------------------------------ *
+ * Rechnen                                                             *
+ * ------------------------------------------------------------------ */
+
+function spieleVonTeam(teamId){
+  return S.spiele.filter(s => s.teamId === teamId)
+                 .sort((a,b) => String(a.datum||"").localeCompare(String(b.datum||"")));
+}
+function gegentoreVonTeam(teamId){
+  return S.spiele.reduce((n,s) => s.teamId === teamId ? n + (s.gegentore||0) : n, 0);
+}
+function bezahltVon(spielerId){
+  return S.zahlungen.reduce((n,z) => z.spielerId === spielerId ? n + (z.cent||0) : n, 0);
+}
+function schuldVon(sp){
+  if (!sp.teamId) return 0;
+  let cent = gegentoreVonTeam(sp.teamId) * S.betragCent;
+  if (S.deckelCent != null) cent = Math.min(cent, S.deckelCent);
+  return cent;
+}
+function tabelle(){
+  return S.spieler.map(sp => {
+    const soll = schuldVon(sp), ist = bezahltVon(sp.id);
+    return {
+      sp,
+      tore: sp.teamId ? gegentoreVonTeam(sp.teamId) : 0,
+      spiele: sp.teamId ? spieleVonTeam(sp.teamId).length : 0,
+      soll, ist, offen: soll - ist
+    };
+  }).sort((a,b) => b.tore - a.tore || a.sp.name.localeCompare(b.sp.name,"de"));
+}
+function summe(){
+  const t = tabelle();
+  return {
+    soll:  t.reduce((n,r) => n + r.soll, 0),
+    ist:   t.reduce((n,r) => n + r.ist, 0),
+    offen: t.reduce((n,r) => n + r.offen, 0)
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * OpenLigaDB                                                          *
+ *                                                                     *
+ * Frei zugaenglich, ohne Schluessel. Antwortet die Schnittstelle       *
+ * nicht, bleibt die Handeingabe der vollstaendige Weg – die           *
+ * Anwendung haengt nicht daran.                                       *
+ * ------------------------------------------------------------------ */
+
+async function hole(pfad){
+  const r = await fetch(API + pfad, { headers: { "Accept": "application/json" } });
+  if (!r.ok) throw new Error("OpenLigaDB antwortet mit " + r.status);
+  return r.json();
+}
+// OpenLigaDB hat die Feldnamen zwischen den Fassungen von Gross- auf
+// Kleinschreibung umgestellt. Beide Schreibweisen werden gelesen.
+function feld(o, ...namen){
+  if (!o) return undefined;
+  for (const n of namen){
+    if (o[n] !== undefined) return o[n];
+    const gross = n.charAt(0).toUpperCase() + n.slice(1);
+    if (o[gross] !== undefined) return o[gross];
+  }
+  return undefined;
+}
+
+async function teamsLaden(liga){
+  const roh = await hole("/getavailableteams/" + liga + "/" + encodeURIComponent(S.saison));
+  if (!Array.isArray(roh) || !roh.length) throw new Error("Keine Mannschaften für " + LIGEN[liga].name + " " + saisonLabel() + " geliefert.");
+  let neu = 0;
+  for (const t of roh){
+    const olId = feld(t,"teamId");
+    const name = feld(t,"teamName") || feld(t,"shortName");
+    if (!name) continue;
+    const da = S.teams.find(x => x.liga === liga && (x.olId === olId || x.name === name));
+    if (da){ da.name = name; da.olId = olId != null ? olId : da.olId; continue; }
+    S.teams.push({ id: uid(), name, liga, olId: olId != null ? olId : null });
+    neu++;
+  }
+  return { gesamt: roh.length, neu };
+}
+
+function endstand(spiel){
+  const erg = feld(spiel,"matchResults") || [];
+  let e = erg.find(r => feld(r,"resultTypeID","resultTypeId") === 2)
+       || erg.find(r => /end/i.test(String(feld(r,"resultName")||"")));
+  if (!e && erg.length) e = erg[erg.length-1];
+  if (e){
+    const a = feld(e,"pointsTeam1"), b = feld(e,"pointsTeam2");
+    if (typeof a === "number" && typeof b === "number") return [a,b];
+  }
+  // Notfalls aus den einzelnen Toren zaehlen
+  const tore = feld(spiel,"goals");
+  if (Array.isArray(tore) && tore.length){
+    const l = tore[tore.length-1];
+    const a = feld(l,"scoreTeam1"), b = feld(l,"scoreTeam2");
+    if (typeof a === "number" && typeof b === "number") return [a,b];
+  }
+  return null;
+}
+
+// Holt die ganze Saison einer Liga und schreibt die Ergebnisse fort.
+// Bereits vorhandene Abruf-Eintraege derselben Liga werden ersetzt,
+// von Hand erfasste Spiele bleiben unangetastet.
+async function ergebnisseLaden(liga){
+  const roh = await hole("/getmatchdata/" + liga + "/" + encodeURIComponent(S.saison));
+  if (!Array.isArray(roh)) throw new Error("Unerwartete Antwort der Schnittstelle.");
+
+  const nachOlId = new Map(), nachName = new Map();
+  for (const t of S.teams){
+    if (t.liga !== liga) continue;
+    if (t.olId != null) nachOlId.set(String(t.olId), t);
+    nachName.set(t.name, t);
+  }
+  const finde = tm => {
+    const id = feld(tm,"teamId");
+    if (id != null && nachOlId.has(String(id))) return nachOlId.get(String(id));
+    const n = feld(tm,"teamName");
+    return n && nachName.has(n) ? nachName.get(n) : null;
+  };
+
+  const behalten = S.spiele.filter(s => {
+    if (s.quelle !== "api") return true;
+    const t = team(s.teamId);
+    return !t || t.liga !== liga;
+  });
+  const frisch = [];
+  let gewertet = 0, offen = 0;
+
+  for (const m of roh){
+    const fertig = feld(m,"matchIsFinished");
+    const erg = endstand(m);
+    if (!erg){ offen++; continue; }
+    if (fertig === false){ offen++; continue; }
+    const t1 = feld(m,"team1"), t2 = feld(m,"team2");
+    const a = finde(t1), b = finde(t2);
+    const spieltag = feld(m,"group") ? feld(feld(m,"group"),"groupOrderID","groupOrderId") : null;
+    const datum = feld(m,"matchDateTime") || feld(m,"matchDateTimeUTC");
+    const olId  = feld(m,"matchID","matchId");
+    gewertet++;
+    if (a) frisch.push({ id: uid(), teamId: a.id, spieltag, datum, gegner: feld(t2,"teamName")||"?",
+                         heim: true,  tore: erg[0], gegentore: erg[1], quelle: "api", olId });
+    if (b) frisch.push({ id: uid(), teamId: b.id, spieltag, datum, gegner: feld(t1,"teamName")||"?",
+                         heim: false, tore: erg[1], gegentore: erg[0], quelle: "api", olId });
+  }
+
+  S.spiele = behalten.concat(frisch);
+  S.letzterAbruf = new Date().toISOString();
+  return { gewertet, offen, eintraege: frisch.length };
+}
+
+/* ------------------------------------------------------------------ *
+ * Ansichten                                                           *
+ * ------------------------------------------------------------------ */
+
+const NAV = [
+  { id:"stand",  label:"Stand"     },
+  { id:"losung", label:"Auslosung" },
+  { id:"spiele", label:"Ergebnisse"},
+  { id:"kasse",  label:"Kasse"     },
+  { id:"mehr",   label:"Mehr"      }
+];
+
+function zeichnen(){
+  $("#nav").innerHTML = NAV.map(n =>
+    '<button data-nav="'+n.id+'"'+(n.id===VIEW?' aria-current="page"':'')+'>'+esc(n.label)+'</button>'
+  ).join("");
+  $("#topMeta").innerHTML = "Saison " + esc(saisonLabel()) + "<br>" + esc(euro(S.betragCent)) + " je Gegentor";
+  const bau = { stand: vStand, losung: vLosung, spiele: vSpiele, kasse: vKasse, mehr: vMehr }[VIEW] || vStand;
+  const meldung = FLASH ? '<div class="note '+FLASH.art+'">'+esc(FLASH.text)+'</div>' : "";
+  FLASH = null;
+  $("#view").innerHTML = '<div class="stack">' + meldung + bau() + '</div>';
+  window.scrollTo(0,0);
+}
+function gehe(v){ VIEW = v; zeichnen(); }
+
+function kopf(titel, unter){
+  return '<div><h1 class="screen-title">'+esc(titel)+'</h1>'+
+         (unter ? '<p class="screen-sub">'+esc(unter)+'</p>' : '')+'</div>';
+}
+function teamPille(t){
+  if (!t) return '<span class="pill">ohne Mannschaft</span>';
+  return '<span class="pill '+t.liga+'">'+esc(LIGEN[t.liga].kurz)+'</span>';
+}
+function teamAuswahl(name, gewaehlt, leerText){
+  const gruppen = ["bl1","bl2","lokal"].map(l => {
+    const ts = S.teams.filter(t => t.liga === l).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+    if (!ts.length) return "";
+    return '<optgroup label="'+esc(LIGEN[l].name)+'">' + ts.map(t =>
+      '<option value="'+t.id+'"'+(t.id===gewaehlt?" selected":"")+'>'+esc(t.name)+'</option>'
+    ).join("") + '</optgroup>';
+  }).join("");
+  return '<select name="'+name+'"><option value="">'+esc(leerText||"— keine —")+'</option>'+gruppen+'</select>';
+}
+
+/* ---------------------------- Stand ------------------------------- */
+
+function vStand(){
+  const t = tabelle(), s = summe();
+  let h = kopf("Stand", S.zweck ? "Für die " + S.zweck : "");
+
+  h += '<div class="kpi">'+
+       '<div class="k"><b class="num">'+esc(euro(s.soll))+'</b><span>fällig gesamt</span></div>'+
+       '<div class="k"><b class="num">'+esc(euro(s.ist))+'</b><span>schon bezahlt</span></div>'+
+       '<div class="k"><b class="num">'+esc(euro(s.offen))+'</b><span>noch offen</span></div>'+
+       '</div>';
+
+  if (!S.spieler.length){
+    h += '<div class="note info">Noch keine Mitspieler. Unter <b>Auslosung</b> die Namen eintragen und die Mannschaften ziehen.</div>';
+    h += '<div class="btn-row"><button class="btn btn-primary" data-nav="losung">Zur Auslosung</button></div>';
+    return h;
+  }
+
+  h += '<div class="card"><div class="tbl-wrap"><table>'+
+       '<thead><tr><th></th><th>Spieler</th><th>Mannschaft</th><th class="r">Sp.</th>'+
+       '<th class="r">Gegentore</th><th class="r">fällig</th><th class="r">offen</th></tr></thead><tbody>';
+  t.forEach((r,i) => {
+    const tm = team(r.sp.teamId);
+    h += '<tr>'+
+      '<td><span class="rank'+(i===0 && r.tore>0 ? " top" : "")+'">'+(i+1)+'</span></td>'+
+      '<td><b>'+esc(r.sp.name)+'</b></td>'+
+      '<td>'+(tm ? esc(tm.name)+' '+teamPille(tm) : '<span class="pill">noch nicht gezogen</span>')+'</td>'+
+      '<td class="r num">'+r.spiele+'</td>'+
+      '<td class="r num"><b>'+r.tore+'</b></td>'+
+      '<td class="r num">'+esc(euro(r.soll))+'</td>'+
+      '<td class="r num">'+(r.offen>0 ? esc(euro(r.offen)) : '<span class="pill">bezahlt</span>')+'</td>'+
+      '</tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  if (S.deckelCent != null)
+    h += '<p class="tiny">Gedeckelt auf höchstens '+esc(euro(S.deckelCent))+' je Spieler.</p>';
+  if (S.letzterAbruf)
+    h += '<p class="tiny">Ergebnisse zuletzt abgerufen am '+esc(datumKurz(S.letzterAbruf))+'.</p>';
+  h += '<p class="tiny">Eigene Mannschaften werden nicht automatisch abgerufen – ihre Ergebnisse kommen unter <b>Ergebnisse</b> von Hand hinein.</p>';
+  return h;
+}
+
+/* --------------------------- Auslosung ---------------------------- */
+
+function vLosung(){
+  let h = kopf("Auslosung", "Namen eintragen, Töpfe wählen, ziehen.");
+
+  h += '<div class="section"><div class="eyebrow">Mitspieler</div>';
+  h += '<form class="row" data-form="spielerNeu">'+
+       '<input type="text" name="name" placeholder="Name" style="flex:1; min-width:180px" required>'+
+       '<button class="btn btn-primary btn-sm" type="submit">Hinzufügen</button></form>';
+  if (S.spieler.length){
+    h += '<div class="list">';
+    S.spieler.forEach(sp => {
+      const tm = team(sp.teamId);
+      h += '<div class="item">'+
+        '<div class="grow"><b>'+esc(sp.name)+'</b>'+
+        '<span class="muted">'+(tm ? esc(tm.name) : "noch keine Mannschaft")+'</span></div>'+
+        (tm ? teamPille(tm) : "")+
+        '<form data-form="spielerTeam" class="row" style="gap:6px">'+
+          '<input type="hidden" name="id" value="'+sp.id+'">'+
+          '<div style="min-width:190px">'+teamAuswahl("teamId", sp.teamId, "— noch keine —")+'</div>'+
+          '<button class="btn btn-sm" type="submit">Setzen</button>'+
+        '</form>'+
+        '<button class="btn btn-danger btn-sm" data-act="spielerWeg" data-id="'+sp.id+'">Weg</button>'+
+        '</div>';
+    });
+    h += '</div>';
+  } else {
+    h += '<p class="muted">Noch niemand eingetragen.</p>';
+  }
+  h += '</div>';
+
+  const zaehl = l => S.teams.filter(t => t.liga === l).length;
+  h += '<div class="section"><div class="eyebrow">Lostopf</div>'+
+       '<div class="card pad"><form data-form="losen"><div class="grid g3">'+
+       ["bl1","bl2","lokal"].map(l =>
+         '<label class="chk"><input type="checkbox" name="topf" value="'+l+'"'+(l!=="lokal"?" checked":"")+'>'+
+         esc(LIGEN[l].name)+' <span class="tiny">('+zaehl(l)+')</span></label>').join("")+
+       '</div><hr>'+
+       '<div class="grid g2">'+
+       '<label class="chk"><input type="checkbox" name="einmalig" checked>Jede Mannschaft nur einmal vergeben</label>'+
+       '<label class="chk"><input type="checkbox" name="alle">Auch schon gezogene Spieler neu losen</label>'+
+       '</div><hr>'+
+       '<button class="btn btn-primary btn-block" type="submit">Auslosen</button>'+
+       '</form></div>';
+  if (!zaehl("bl1") && !zaehl("bl2"))
+    h += '<div class="note warn">Für die Bundesliga sind noch keine Mannschaften da. Unter <b>Mehr → Mannschaften</b> einmal laden – oder von Hand eintragen.</div>';
+  h += '</div>';
+  return h;
+}
+
+/* --------------------------- Ergebnisse --------------------------- */
+
+function vSpiele(){
+  let h = kopf("Ergebnisse", "Bundesliga automatisch, eigene Mannschaften von Hand.");
+
+  h += '<div class="section"><div class="eyebrow">Automatisch abrufen</div>'+
+       '<div class="card pad"><p class="muted">Holt alle bereits gespielten Partien der Saison '+
+       esc(saisonLabel())+' von OpenLigaDB und schreibt die Gegentore fort. Von Hand erfasste Spiele bleiben erhalten.</p>'+
+       '<div class="btn-row" style="margin-top:12px">'+
+       '<button class="btn btn-primary'+(BUSY?" ":"")+'" data-act="abrufen" data-liga="bl1"'+(BUSY?" disabled":"")+'>1. Bundesliga laden</button>'+
+       '<button class="btn'+(BUSY?" ":"")+'" data-act="abrufen" data-liga="bl2"'+(BUSY?" disabled":"")+'>2. Bundesliga laden</button>'+
+       '</div>'+
+       (S.letzterAbruf ? '<p class="tiny" style="margin-top:10px">Zuletzt: '+esc(new Date(S.letzterAbruf).toLocaleString("de-DE"))+'</p>' : '')+
+       '</div></div>';
+
+  h += '<div class="section"><div class="eyebrow">Von Hand eintragen</div>'+
+       '<div class="card pad"><form data-form="spielNeu"><div class="grid g3">'+
+       '<label class="f">Mannschaft'+teamAuswahl("teamId","","— wählen —")+'</label>'+
+       '<label class="f">Datum<input type="date" name="datum" value="'+heute()+'"></label>'+
+       '<label class="f">Gegner<input type="text" name="gegner" placeholder="z. B. VfL Rheda"></label>'+
+       '</div><div class="grid g3" style="margin-top:12px">'+
+       '<label class="f">Eigene Tore<input type="number" name="tore" min="0" step="1" value="0"></label>'+
+       '<label class="f">Gegentore<input type="number" name="gegentore" min="0" step="1" value="0" required></label>'+
+       '<label class="f">Spieltag<input type="number" name="spieltag" min="1" step="1" placeholder="optional"></label>'+
+       '</div><hr><button class="btn btn-primary btn-block" type="submit">Spiel eintragen</button>'+
+       '</form></div></div>';
+
+  const gezogen = new Set(S.spieler.map(s => s.teamId).filter(Boolean));
+  const relevant = S.spiele.filter(s => gezogen.has(s.teamId))
+    .sort((a,b) => String(b.datum||"").localeCompare(String(a.datum||"")));
+
+  h += '<div class="section"><div class="head-row"><div class="eyebrow">Spiele der gezogenen Mannschaften</div>'+
+       '<span class="tiny">'+relevant.length+' von '+S.spiele.length+' erfassten Spielen</span></div>';
+  if (!relevant.length){
+    h += '<p class="muted">Noch nichts da – oder es ist noch keine Mannschaft gezogen.</p>';
+  } else {
+    h += '<div class="card"><div class="tbl-wrap"><table><thead><tr>'+
+         '<th>Datum</th><th>Mannschaft</th><th>Gegner</th><th class="r">Erg.</th>'+
+         '<th class="r">Gegentore</th><th>Quelle</th><th></th></tr></thead><tbody>';
+    relevant.slice(0,200).forEach(s => {
+      h += '<tr>'+
+        '<td class="num">'+esc(datumKurz(s.datum))+(s.spieltag?' <span class="tiny">('+s.spieltag+'.)</span>':'')+'</td>'+
+        '<td><b>'+esc(teamName(s.teamId))+'</b></td>'+
+        '<td>'+esc(s.gegner||"—")+(s.heim===false?' <span class="tiny">(a)</span>':'')+'</td>'+
+        '<td class="r num">'+(s.tore==null?"–":s.tore)+':'+(s.gegentore==null?"–":s.gegentore)+'</td>'+
+        '<td class="r num"><b>'+(s.gegentore||0)+'</b></td>'+
+        '<td><span class="pill">'+(s.quelle==="api"?"Abruf":"Hand")+'</span></td>'+
+        '<td class="r"><button class="btn btn-ghost btn-sm" data-act="spielWeg" data-id="'+s.id+'">löschen</button></td>'+
+        '</tr>';
+    });
+    h += '</tbody></table></div></div>';
+    if (relevant.length > 200) h += '<p class="tiny">Nur die 200 jüngsten Spiele werden angezeigt; gerechnet wird mit allen.</p>';
+  }
+  h += '</div>';
+  return h;
+}
+
+/* ----------------------------- Kasse ------------------------------ */
+
+function vKasse(){
+  const t = tabelle(), s = summe();
+  let h = kopf("Kasse", S.zweck || "");
+
+  h += '<div class="kpi">'+
+       '<div class="k"><b class="num">'+esc(euro(s.ist))+'</b><span>in der Kasse</span></div>'+
+       '<div class="k"><b class="num">'+esc(euro(s.offen))+'</b><span>ausstehend</span></div>'+
+       '<div class="k"><b class="num">'+esc(euro(s.soll))+'</b><span>fällig gesamt</span></div>'+
+       '</div>';
+
+  if (!S.spieler.length) return h + '<div class="note info">Erst Mitspieler anlegen.</div>';
+
+  h += '<div class="section"><div class="eyebrow">Offene Beträge</div><div class="list">';
+  t.forEach(r => {
+    h += '<div class="item">'+
+      '<div class="grow"><b>'+esc(r.sp.name)+'</b>'+
+      '<span class="muted">'+esc(teamName(r.sp.teamId))+' · '+r.tore+' Gegentore · fällig '+esc(euro(r.soll))+'</span></div>'+
+      '<div class="num" style="font-weight:700; color:'+(r.offen>0?"var(--bad-ink)":"var(--grass)")+'">'+
+        (r.offen>0 ? esc(euro(r.offen))+" offen" : "ausgeglichen")+'</div>'+
+      (r.offen>0
+        ? '<button class="btn btn-primary btn-sm" data-act="zahlOffen" data-id="'+r.sp.id+'" data-cent="'+r.offen+'">offen buchen</button>'
+        : '')+
+      '</div>';
+  });
+  h += '</div></div>';
+
+  h += '<div class="section"><div class="eyebrow">Zahlung eintragen</div>'+
+       '<div class="card pad"><form data-form="zahlungNeu"><div class="grid g3">'+
+       '<label class="f">Spieler<select name="spielerId" required><option value="">— wählen —</option>'+
+       S.spieler.map(sp => '<option value="'+sp.id+'">'+esc(sp.name)+'</option>').join("")+
+       '</select></label>'+
+       '<label class="f">Betrag (€)<input type="text" name="betrag" inputmode="decimal" placeholder="z. B. 12,50" required></label>'+
+       '<label class="f">Datum<input type="date" name="datum" value="'+heute()+'"></label>'+
+       '</div><label class="f" style="margin-top:12px">Notiz<input type="text" name="notiz" placeholder="optional"></label>'+
+       '<hr><button class="btn btn-primary btn-block" type="submit">Buchen</button></form></div></div>';
+
+  const z = S.zahlungen.slice().sort((a,b)=>String(b.datum||"").localeCompare(String(a.datum||"")));
+  h += '<div class="section"><div class="eyebrow">Buchungen</div>';
+  if (!z.length) h += '<p class="muted">Noch keine Zahlung eingetragen.</p>';
+  else {
+    h += '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Datum</th><th>Spieler</th>'+
+         '<th>Notiz</th><th class="r">Betrag</th><th></th></tr></thead><tbody>';
+    z.forEach(b => {
+      const sp = S.spieler.find(x => x.id === b.spielerId);
+      h += '<tr><td class="num">'+esc(datumKurz(b.datum))+'</td>'+
+        '<td>'+esc(sp?sp.name:"(gelöscht)")+'</td><td class="muted">'+esc(b.notiz||"")+'</td>'+
+        '<td class="r num">'+esc(euro(b.cent))+'</td>'+
+        '<td class="r"><button class="btn btn-ghost btn-sm" data-act="zahlungWeg" data-id="'+b.id+'">löschen</button></td></tr>';
+    });
+    h += '</tbody></table></div></div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+/* ------------------------------ Mehr ------------------------------ */
+
+function vMehr(){
+  let h = kopf("Mehr", "Einsatz, Mannschaften, Sicherung.");
+
+  h += '<div class="section"><div class="eyebrow">Spielregeln</div>'+
+       '<div class="card pad"><form data-form="regeln"><div class="grid g2">'+
+       '<label class="f">Einsatz je Gegentor (€)<input type="text" name="betrag" inputmode="decimal" value="'+
+         esc(((S.betragCent||0)/100).toFixed(2).replace(".",","))+'" required></label>'+
+       '<label class="f">Höchstbetrag je Spieler (€)<input type="text" name="deckel" inputmode="decimal" placeholder="leer = ohne Deckel" value="'+
+         (S.deckelCent!=null?esc((S.deckelCent/100).toFixed(2).replace(".",",")):"")+'"></label>'+
+       '<label class="f">Saison (Startjahr)<input type="text" name="saison" inputmode="numeric" value="'+esc(S.saison)+'" required></label>'+
+       '<label class="f">Zweck der Kasse<input type="text" name="zweck" value="'+esc(S.zweck||"")+'"></label>'+
+       '</div><hr><button class="btn btn-primary btn-block" type="submit">Übernehmen</button></form></div>'+
+       '<p class="tiny">OpenLigaDB zählt eine Saison nach ihrem Startjahr: 2026 steht für 2026/27.</p></div>';
+
+  h += '<div class="section"><div class="eyebrow">Mannschaften</div>'+
+       '<div class="card pad"><p class="muted">Die Bundesliga-Mannschaften einmal je Saison laden. Eigene Mannschaften trägst du selbst ein – für Kreisligen gibt es keine öffentliche Schnittstelle.</p>'+
+       '<div class="btn-row" style="margin-top:12px">'+
+       '<button class="btn btn-primary" data-act="teamsHolen" data-liga="bl1"'+(BUSY?" disabled":"")+'>1. Bundesliga laden</button>'+
+       '<button class="btn" data-act="teamsHolen" data-liga="bl2"'+(BUSY?" disabled":"")+'>2. Bundesliga laden</button>'+
+       '</div><hr>'+
+       '<form class="row" data-form="teamNeu">'+
+       '<input type="text" name="name" placeholder="Eigene Mannschaft, z. B. FSC Rheda III" style="flex:1; min-width:200px" required>'+
+       '<button class="btn btn-sm" type="submit">Anlegen</button></form>'+
+       '</div>';
+
+  ["bl1","bl2","lokal"].forEach(l => {
+    const ts = S.teams.filter(t => t.liga === l).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+    if (!ts.length) return;
+    h += '<div class="card pad"><div class="head-row"><b>'+esc(LIGEN[l].name)+'</b>'+
+         '<span class="tiny">'+ts.length+' Mannschaften</span></div><hr><div class="list">';
+    ts.forEach(t => {
+      const belegt = S.spieler.find(sp => sp.teamId === t.id);
+      h += '<div class="item"><div class="grow"><b>'+esc(t.name)+'</b>'+
+        '<span class="tiny">'+gegentoreVonTeam(t.id)+' Gegentore · '+spieleVonTeam(t.id).length+' Spiele'+
+        (belegt ? ' · gezogen von '+esc(belegt.name) : '')+'</span></div>'+
+        '<button class="btn btn-ghost btn-sm" data-act="teamWeg" data-id="'+t.id+'">löschen</button></div>';
+    });
+    h += '</div></div>';
+  });
+  h += '</div>';
+
+  h += '<div class="section"><div class="eyebrow">Sicherung</div>'+
+       '<div class="card pad"><p class="muted">Alles liegt allein in diesem Browser. Wird der Verlauf gelöscht oder das Gerät gewechselt, ist es weg – deshalb ab und zu sichern.</p>'+
+       '<div class="btn-row" style="margin-top:12px">'+
+       '<button class="btn btn-primary" data-act="export">Sicherung speichern</button>'+
+       '<button class="btn" data-act="importAn">Sicherung einlesen</button>'+
+       '<button class="btn btn-danger" data-act="reset">Alles löschen</button>'+
+       '</div><input type="file" id="importFeld" accept="application/json,.json" class="hide">'+
+       '</div></div>';
+
+  h += '<div class="note info">Gespielt wird so: Jeder zieht zu Saisonbeginn eine Mannschaft. '+
+       'Für jedes Gegentor seiner Mannschaft zahlt er '+esc(euro(S.betragCent))+' in die Kasse. '+
+       'Wer am Saisonende die meisten Gegentore gesammelt hat, zahlt am meisten.</div>';
+  return h;
+}
+
+/* ------------------------------------------------------------------ *
+ * Bedienung                                                           *
+ * ------------------------------------------------------------------ */
+
+document.addEventListener("click", async ev => {
+  const el = ev.target.closest("[data-nav],[data-act]");
+  if (!el) return;
+  const nav = el.getAttribute("data-nav");
+  if (nav){ gehe(nav); return; }
+  const act = el.getAttribute("data-act");
+  const id  = el.getAttribute("data-id");
+
+  if (act === "spielerWeg"){
+    const sp = S.spieler.find(x => x.id === id);
+    if (sp && confirm(sp.name + " entfernen? Zahlungen dieses Spielers werden mitgelöscht.")){
+      S.spieler = S.spieler.filter(x => x.id !== id);
+      S.zahlungen = S.zahlungen.filter(z => z.spielerId !== id);
+      sichern(); zeichnen();
+    }
+    return;
+  }
+  if (act === "spielWeg"){
+    S.spiele = S.spiele.filter(s => s.id !== id); sichern(); zeichnen(); return;
+  }
+  if (act === "zahlungWeg"){
+    S.zahlungen = S.zahlungen.filter(z => z.id !== id); sichern(); zeichnen(); return;
+  }
+  if (act === "teamWeg"){
+    const t = team(id);
+    if (!t) return;
+    const belegt = S.spieler.some(sp => sp.teamId === id);
+    const spiele = spieleVonTeam(id).length;
+    if (!confirm(t.name + " löschen?" + (belegt ? " Achtung: die Mannschaft ist gezogen." : "") +
+                 (spiele ? " " + spiele + " Spiele werden mitgelöscht." : ""))) return;
+    S.teams = S.teams.filter(x => x.id !== id);
+    S.spiele = S.spiele.filter(s => s.teamId !== id);
+    S.spieler.forEach(sp => { if (sp.teamId === id) sp.teamId = null; });
+    sichern(); zeichnen(); return;
+  }
+  if (act === "zahlOffen"){
+    const cent = parseInt(el.getAttribute("data-cent"),10) || 0;
+    if (cent <= 0) return;
+    S.zahlungen.push({ id: uid(), spielerId: id, cent, datum: heute(), notiz: "offener Betrag" });
+    sichern(); flash("ok","Zahlung über "+euro(cent)+" gebucht."); zeichnen(); return;
+  }
+  if (act === "teamsHolen" || act === "abrufen"){
+    const liga = el.getAttribute("data-liga");
+    BUSY = true; el.disabled = true; el.textContent = "lädt …";
+    try{
+      if (act === "teamsHolen"){
+        const r = await teamsLaden(liga);
+        sichern();
+        flash("ok", LIGEN[liga].name + " " + saisonLabel() + ": " + r.gesamt + " Mannschaften, davon " + r.neu + " neu.");
+      } else {
+        const r = await ergebnisseLaden(liga);
+        sichern();
+        flash("ok", LIGEN[liga].name + ": " + r.gewertet + " gespielte Partien übernommen" +
+              (r.offen ? ", " + r.offen + " noch ohne Ergebnis" : "") + ".");
+      }
+    }catch(e){
+      flash("bad", "Abruf fehlgeschlagen: " + e.message +
+            " – die Ergebnisse lassen sich weiterhin von Hand eintragen.");
+    }
+    BUSY = false; zeichnen(); return;
+  }
+  if (act === "export"){
+    const blob = new Blob([JSON.stringify(S,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "gegentorespiel-" + saisonLabel().replace("/","-") + "-" + heute() + ".json";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    return;
+  }
+  if (act === "importAn"){ $("#importFeld").click(); return; }
+  if (act === "reset"){
+    if (confirm("Wirklich alles löschen? Spieler, Mannschaften, Ergebnisse und Kasse sind dann weg.") &&
+        confirm("Letzte Nachfrage: Es gibt kein Zurück ohne Sicherung.")){
+      localStorage.removeItem(LS_KEY);
+      S = erstStart(); sichern(); VIEW = "stand";
+      flash("ok","Alles zurückgesetzt."); zeichnen();
+    }
+    return;
+  }
+});
+
+document.addEventListener("change", ev => {
+  if (ev.target.id !== "importFeld") return;
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const leser = new FileReader();
+  leser.onload = () => {
+    try{
+      const z = JSON.parse(leser.result);
+      if (!z || !Array.isArray(z.spieler) || !Array.isArray(z.teams)) throw new Error("Das ist keine Sicherung dieser Anwendung.");
+      if (!confirm("Sicherung einlesen? Der jetzige Stand wird ersetzt.")) return;
+      const d = leerZustand();
+      for (const k in d) if (!(k in z)) z[k] = d[k];
+      S = z; sichern(); VIEW = "stand";
+      flash("ok","Sicherung eingelesen."); zeichnen();
+    }catch(e){ flash("bad","Einlesen fehlgeschlagen: "+e.message); zeichnen(); }
+  };
+  leser.readAsText(f);
+});
+
+document.addEventListener("submit", ev => {
+  const f = ev.target.closest("form[data-form]");
+  if (!f) return;
+  ev.preventDefault();
+  const d = Object.fromEntries(new FormData(f).entries());
+  const art = f.getAttribute("data-form");
+
+  if (art === "spielerNeu"){
+    const name = (d.name||"").trim();
+    if (!name) return;
+    if (S.spieler.some(s => s.name.toLowerCase() === name.toLowerCase())){
+      flash("warn", name + " steht schon auf der Liste."); zeichnen(); return;
+    }
+    S.spieler.push({ id: uid(), name, teamId: null });
+    sichern(); zeichnen(); return;
+  }
+  if (art === "spielerTeam"){
+    const sp = S.spieler.find(x => x.id === d.id);
+    if (sp){ sp.teamId = d.teamId || null; sichern(); }
+    zeichnen(); return;
+  }
+  if (art === "losen"){
+    const toepfe = new FormData(f).getAll("topf");
+    const einmalig = !!d.einmalig, alle = !!d.alle;
+    if (!toepfe.length){ flash("warn","Kein Lostopf gewählt."); zeichnen(); return; }
+    const ziehen = alle ? S.spieler.slice() : S.spieler.filter(sp => !sp.teamId);
+    if (!ziehen.length){ flash("warn","Alle haben schon eine Mannschaft. Zum Neuziehen den Haken setzen."); zeichnen(); return; }
+    let topf = S.teams.filter(t => toepfe.includes(t.liga));
+    if (einmalig && !alle){
+      const vergeben = new Set(S.spieler.filter(sp => sp.teamId).map(sp => sp.teamId));
+      topf = topf.filter(t => !vergeben.has(t.id));
+    }
+    if (!topf.length){ flash("bad","Im Lostopf ist keine freie Mannschaft."); zeichnen(); return; }
+    if (einmalig && topf.length < ziehen.length){
+      flash("warn","Nur "+topf.length+" freie Mannschaften für "+ziehen.length+" Spieler – es bleiben welche ohne."); 
+    }
+    for (let i = topf.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [topf[i], topf[j]] = [topf[j], topf[i]];
+    }
+    if (alle) S.spieler.forEach(sp => sp.teamId = null);
+    ziehen.forEach((sp, i) => {
+      const t = einmalig ? topf[i] : topf[Math.floor(Math.random()*topf.length)];
+      sp.teamId = t ? t.id : null;
+    });
+    sichern();
+    if (!FLASH) flash("ok","Ausgelost. Viel Spaß – und wenig Gegentore.");
+    VIEW = "stand"; zeichnen(); return;
+  }
+  if (art === "spielNeu"){
+    if (!d.teamId){ flash("warn","Erst eine Mannschaft wählen."); zeichnen(); return; }
+    const geg = parseInt(d.gegentore,10);
+    if (!isFinite(geg) || geg < 0){ flash("warn","Gegentore fehlen."); zeichnen(); return; }
+    S.spiele.push({
+      id: uid(), teamId: d.teamId,
+      spieltag: d.spieltag ? parseInt(d.spieltag,10) : null,
+      datum: d.datum || heute(),
+      gegner: (d.gegner||"").trim(),
+      heim: true,
+      tore: parseInt(d.tore,10) || 0,
+      gegentore: geg,
+      quelle: "hand", olId: null
+    });
+    sichern(); flash("ok","Spiel eingetragen: "+geg+" Gegentore für "+teamName(d.teamId)+"."); zeichnen(); return;
+  }
+  if (art === "zahlungNeu"){
+    const cent = centAus(d.betrag);
+    if (!d.spielerId || cent == null || cent <= 0){ flash("warn","Spieler und Betrag prüfen."); zeichnen(); return; }
+    S.zahlungen.push({ id: uid(), spielerId: d.spielerId, cent, datum: d.datum || heute(), notiz: (d.notiz||"").trim() });
+    sichern(); flash("ok","Zahlung gebucht."); zeichnen(); return;
+  }
+  if (art === "regeln"){
+    const b = centAus(d.betrag);
+    if (b == null || b <= 0){ flash("warn","Der Einsatz muss größer als null sein."); zeichnen(); return; }
+    S.betragCent = b;
+    const dk = (d.deckel||"").trim();
+    S.deckelCent = dk ? centAus(dk) : null;
+    const sa = (d.saison||"").trim();
+    if (/^\d{4}$/.test(sa)) S.saison = sa;
+    S.zweck = (d.zweck||"").trim();
+    sichern(); flash("ok","Übernommen."); zeichnen(); return;
+  }
+  if (art === "teamNeu"){
+    const name = (d.name||"").trim();
+    if (!name) return;
+    if (S.teams.some(t => t.name.toLowerCase() === name.toLowerCase())){
+      flash("warn","Diese Mannschaft gibt es schon."); zeichnen(); return;
+    }
+    S.teams.push({ id: uid(), name, liga: "lokal", olId: null });
+    sichern(); flash("ok",name+" angelegt."); zeichnen(); return;
+  }
+});
+
+zeichnen();
+</script>
