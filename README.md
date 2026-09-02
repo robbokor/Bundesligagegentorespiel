@@ -37,9 +37,23 @@ Ergebnissen einer Liga, nichts über die Mitspieler.
 Nach dem Laden der 3. Liga liegt von dort zunächst *keine* Mannschaft im
 Lostopf – die gewünschte wird unter *Auslosung* einzeln angekreuzt.
 
-Für Kreisligen gibt es keine öffentliche Schnittstelle. Die Spiele der eigenen
-Mannschaften werden deshalb von Hand erfasst. Ein erneuter Abruf der Bundesliga
-lässt diese Einträge unangetastet.
+### Die eigenen Mannschaften
+
+Für den FSC Rheda kommt der **Spielplan** automatisch: Ein Arbeitsablauf holt
+täglich Datum, Gegner und Wettbewerb beider Herrenmannschaften von fussball.de
+und legt sie als `daten/rheda.json` ab. In der Anwendung erscheinen die Spiele
+dann unter *Ergebnisse → Noch einzutragen* – zwei Felder, zwei Zahlen, fertig.
+
+**Die Ergebnisse kommen nicht mit, und das mit Absicht.** fussball.de gibt die
+Tore als Zeichen aus dem privaten Unicode-Bereich aus, die erst eine eigene
+Schriftart zu Ziffern macht – eine bewusste Sperre gegen das maschinelle
+Auslesen. Sie wird hier nicht umgangen. Übrig bleibt genau die Handarbeit, die
+sie erzwingt: die beiden Zahlen.
+
+Pokal- und Freundschaftsspiele erkennt der Abruf am Kürzel der Spielnummer
+(`ME`, `PO`, `FS`) und lässt sie gleich weg – gezahlt wird nur für die
+Meisterschaft. Ein einmal von Hand eingetragenes Ergebnis überschreibt kein
+späterer Abruf.
 
 ## Wo die Daten liegen
 

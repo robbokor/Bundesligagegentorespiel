@@ -166,7 +166,8 @@ function leerZustand(){
     teams: [],                   // {id, name, liga, olId, topf}
     spiele: [],                  // {id, teamId, spieltag, datum, gegner, heim, tore, gegentore, quelle, olId, wettbewerb}
     zahlungen: [],               // {id, spielerId, cent, datum, notiz}
-    letzterAbruf: null           // ISO-Zeitpunkt des letzten API-Abrufs
+    letzterAbruf: null,          // ISO-Zeitpunkt des letzten API-Abrufs
+    planStand: null              // Stand des zuletzt eingelesenen Spielplans
   };
 }
 
@@ -242,7 +243,11 @@ const WETTBEWERBE = { liga:"Liga", pokal:"Pokal", freund:"Freundschaftsspiel" };
 // Gezahlt wird nur fuer Ligaspiele. Pokal und Freundschaftsspiele duerfen
 // erfasst werden, zaehlen aber nicht mit. Aeltere Eintraege ohne Angabe
 // sind Ligaspiele: etwas anderes liess sich frueher gar nicht eintragen.
-function zaehlt(s){ return (s.wettbewerb || "liga") === "liga"; }
+function zaehlt(s){
+  return (s.wettbewerb || "liga") === "liga" && typeof s.gegentore === "number";
+}
+// Aus dem Spielplan uebernommen, aber noch ohne Ergebnis.
+function offen(s){ return typeof s.gegentore !== "number"; }
 
 function spieleVonTeam(teamId){
   return S.spiele.filter(s => s.teamId === teamId)
@@ -391,6 +396,62 @@ async function ergebnisseLaden(liga){
   S.spiele = behalten.concat(frisch);
   S.letzterAbruf = new Date().toISOString();
   return { gewertet, offen, eintraege: frisch.length };
+}
+
+/* ------------------------------------------------------------------ *
+ * Spielplan der eigenen Mannschaften                                  *
+ *                                                                     *
+ * Eine Datei neben dieser Seite, taeglich von einem Arbeitsablauf auf *
+ * GitHub erneuert. Sie enthaelt Datum, Gegner und Wettbewerb - keine  *
+ * Ergebnisse: die sind auf fussball.de nicht maschinenlesbar. Die     *
+ * Tore traegt man hier nach.                                          *
+ * ------------------------------------------------------------------ */
+
+async function spielplanLaden(){
+  const r = await fetch("daten/rheda.json?stand=" + Date.now(), { cache: "no-store" });
+  if (!r.ok) throw new Error("Spielplan nicht erreichbar (" + r.status + ")");
+  const d = await r.json();
+  if (!d || !Array.isArray(d.mannschaften)) throw new Error("Die Spielplandatei ist unbrauchbar.");
+
+  // Der Spielplan reicht in die Vorsaison zurueck. Gezaehlt wird nur,
+  // was zur eingestellten Saison gehoert - sie beginnt im Juli.
+  const ab = (parseInt(S.saison,10) || new Date().getFullYear()) + "-07-01";
+
+  let neu = 0, erneuert = 0, geschuetzt = 0, alt = 0;
+  for (const m of d.mannschaften){
+    let t = S.teams.find(x => x.name === m.appName);
+    if (!t){
+      t = { id: uid(), name: m.appName, liga: "lokal", olId: null, topf: true };
+      S.teams.push(t);
+    }
+    for (const sp of (m.spiele || [])){
+      if (sp.art !== "liga" || sp.abgesetzt || !sp.nr) continue;
+      if (!sp.datum || sp.datum < ab){ alt++; continue; }
+      const da = S.spiele.find(x => x.teamId === t.id && x.planNr === sp.nr);
+      if (da){
+        // Von Hand eingetragene Zahlen bleiben unangetastet.
+        if (da.quelle === "hand"){ geschuetzt++; continue; }
+        da.datum = sp.datum; da.gegner = sp.gegner; da.heim = !!sp.heim;
+        erneuert++;
+        continue;
+      }
+      S.spiele.push({
+        id: uid(), teamId: t.id, spieltag: null,
+        datum: sp.datum, gegner: sp.gegner, heim: !!sp.heim,
+        tore: null, gegentore: null,
+        wettbewerb: "liga", quelle: "plan", olId: null, planNr: sp.nr
+      });
+      neu++;
+    }
+  }
+  S.planStand = d.stand || new Date().toISOString();
+  return { neu, erneuert, geschuetzt, alt };
+}
+
+function planAlter(){
+  if (!S.planStand) return null;
+  const t = (Date.now() - new Date(S.planStand).getTime()) / 86400000;
+  return isFinite(t) ? t : null;
 }
 
 /* ------------------------------------------------------------------ *
@@ -558,6 +619,44 @@ function vSpiele(){
        (S.letzterAbruf ? '<p class="tiny" style="margin-top:10px">Zuletzt: '+esc(new Date(S.letzterAbruf).toLocaleString("de-DE"))+'</p>' : '')+
        '</div></div>';
 
+  const nachzutragen = S.spiele
+    .filter(s => offen(s) && (s.wettbewerb||"liga") === "liga")
+    .sort((a,b) => String(b.datum||"").localeCompare(String(a.datum||"")));
+  const alter = planAlter();
+
+  h += '<div class="section"><div class="head-row"><div class="eyebrow">Eigene Mannschaften</div>'+
+       (S.planStand ? '<span class="tiny">Spielplan vom '+esc(datumKurz(S.planStand))+'</span>' : '')+
+       '</div>'+
+       '<div class="card pad"><p class="muted">Holt Datum, Gegner und Wettbewerb der FSC-Rheda-Mannschaften. '+
+       'Die Tore stehen auf fussball.de nicht maschinenlesbar drin – die trägst du unten nach. '+
+       'Pokal und Freundschaftsspiele kommen gar nicht erst mit.</p>'+
+       '<div class="btn-row" style="margin-top:12px">'+
+       '<button class="btn btn-primary" data-act="planLaden"'+(BUSY?" disabled":"")+'>Spielplan laden</button>'+
+       '</div></div>';
+  if (alter != null && alter > 10)
+    h += '<div class="note warn">Der Spielplan ist '+Math.round(alter)+' Tage alt. Läuft der tägliche Abruf noch?</div>';
+  h += '</div>';
+
+  if (nachzutragen.length){
+    h += '<div class="section"><div class="head-row"><div class="eyebrow">Noch einzutragen</div>'+
+         '<span class="tiny">'+nachzutragen.length+' Spiele</span></div><div class="list">';
+    nachzutragen.forEach(s => {
+      h += '<div class="item">'+
+        '<div class="grow"><b>'+esc(teamName(s.teamId))+'</b>'+
+        '<span class="muted">'+esc(datumKurz(s.datum))+' · '+(s.heim?"gegen":"bei")+' '+esc(s.gegner||"?")+'</span></div>'+
+        '<form class="row" data-form="ergebnis" style="gap:6px">'+
+          '<input type="hidden" name="id" value="'+s.id+'">'+
+          '<input type="number" name="tore" min="0" step="1" placeholder="eig." style="width:80px" aria-label="Eigene Tore">'+
+          '<span>:</span>'+
+          '<input type="number" name="gegentore" min="0" step="1" placeholder="geg." style="width:80px" required aria-label="Gegentore">'+
+          '<button class="btn btn-primary btn-sm" type="submit">Eintragen</button>'+
+        '</form>'+
+        '<button class="btn btn-ghost btn-sm" data-act="spielWeg" data-id="'+s.id+'">weg</button>'+
+        '</div>';
+    });
+    h += '</div></div>';
+  }
+
   h += '<div class="section"><div class="eyebrow">Von Hand eintragen</div>'+
        '<div class="card pad"><form data-form="spielNeu"><div class="grid g3">'+
        '<label class="f">Mannschaft'+teamAuswahl("teamId","","— wählen —")+'</label>'+
@@ -575,7 +674,7 @@ function vSpiele(){
        '</form></div></div>';
 
   const gezogen = new Set(S.spieler.map(s => s.teamId).filter(Boolean));
-  const relevant = S.spiele.filter(s => gezogen.has(s.teamId))
+  const relevant = S.spiele.filter(s => gezogen.has(s.teamId) && !offen(s))
     .sort((a,b) => String(b.datum||"").localeCompare(String(a.datum||"")));
 
   h += '<div class="section"><div class="head-row"><div class="eyebrow">Spiele der gezogenen Mannschaften</div>'+
@@ -596,7 +695,7 @@ function vSpiele(){
         '<td>'+(mit ? '<span class="pill bl1">Liga</span>' : '<span class="pill">'+esc(WETTBEWERBE[w]||w)+'</span>')+'</td>'+
         '<td class="r num">'+(s.tore==null?"–":s.tore)+':'+(s.gegentore==null?"–":s.gegentore)+'</td>'+
         '<td class="r num">'+(mit ? '<b>'+(s.gegentore||0)+'</b>' : '<span class="tiny">zählt nicht</span>')+'</td>'+
-        '<td><span class="pill">'+(s.quelle==="api"?"Abruf":"Hand")+'</span></td>'+
+        '<td><span class="pill">'+(s.quelle==="api"?"Abruf":s.quelle==="plan"?"Spielplan":"Hand")+'</span></td>'+
         '<td class="r"><button class="btn btn-ghost btn-sm" data-act="spielWeg" data-id="'+s.id+'">löschen</button></td>'+
         '</tr>';
     });
@@ -765,6 +864,20 @@ document.addEventListener("click", async ev => {
     S.spieler.forEach(sp => { if (sp.teamId === id) sp.teamId = null; });
     sichern(); zeichnen(); return;
   }
+  if (act === "planLaden"){
+    BUSY = true; el.disabled = true; el.textContent = "lädt …";
+    try{
+      const r = await spielplanLaden();
+      sichern();
+      flash("ok", "Spielplan gelesen: " + r.neu + " neue Spiele, " + r.erneuert + " aufgefrischt" +
+            (r.geschuetzt ? ", " + r.geschuetzt + " von Hand eingetragene unangetastet" : "") +
+            (r.alt ? ", " + r.alt + " aus der Vorsaison übergangen" : "") + ".");
+    }catch(e){
+      flash("bad", "Spielplan nicht gelesen: " + e.message +
+            " – auf dem eigenen Rechner ohne Server gibt es die Datei nicht; die Handeingabe bleibt.");
+    }
+    BUSY = false; zeichnen(); return;
+  }
   if (act === "topfUm"){
     const t = team(id);
     if (t){ t.topf = (t.topf === false); sichern(); zeichnen(); }
@@ -888,6 +1001,17 @@ document.addEventListener("submit", ev => {
     sichern();
     if (!FLASH) flash("ok","Ausgelost. Viel Spaß – und wenig Gegentore.");
     VIEW = "stand"; zeichnen(); return;
+  }
+  if (art === "ergebnis"){
+    const sp = S.spiele.find(x => x.id === d.id);
+    const geg = parseInt(d.gegentore,10);
+    if (!sp || !isFinite(geg) || geg < 0){ flash("warn","Gegentore fehlen."); zeichnen(); return; }
+    sp.gegentore = geg;
+    sp.tore = d.tore === "" || d.tore == null ? null : (parseInt(d.tore,10) || 0);
+    sp.quelle = "hand";                       // ab jetzt vor jedem Import sicher
+    sichern();
+    flash("ok", teamName(sp.teamId) + ": " + geg + " Gegentore eingetragen.");
+    zeichnen(); return;
   }
   if (art === "spielNeu"){
     if (!d.teamId){ flash("warn","Erst eine Mannschaft wählen."); zeichnen(); return; }
