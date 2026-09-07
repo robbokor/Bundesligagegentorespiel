@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-06T09:32:06.776Z",
+  "stand": "2026-09-07T10:30:46.599Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -9,16 +9,6 @@
       "teamId": "011MIB0SGC000000VTVG0001VTR8C1K7",
       "liga": "Verbandsliga",
       "spiele": [
-        {
-          "nr": "240016026",
-          "datum": "2026-07-14",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": true,
-          "gegner": "SV Avenwedde",
-          "abgesetzt": true
-        },
         {
           "nr": "240016074",
           "datum": "2026-07-14",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "FC Nordkirchen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097105",
+          "datum": "2026-11-15",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "SC Herford",
           "abgesetzt": true
         }
       ]
@@ -218,16 +218,6 @@
       "liga": "Kreisliga A",
       "spiele": [
         {
-          "nr": "210730225",
-          "datum": "2026-05-25",
-          "zeit": "18:30",
-          "wettbewerb": "Kreisliga A",
-          "art": "liga",
-          "heim": false,
-          "gegner": "Victoria Clarholz II",
-          "abgesetzt": true
-        },
-        {
           "nr": "210730240",
           "datum": "2026-05-29",
           "zeit": "19:00",
@@ -235,7 +225,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "Tur Abdin Gütersloh",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "240016021",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "SC GW Varensell",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730112",
+          "datum": "2026-11-29",
+          "zeit": "14:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SV Schwarz-Gelb Bokel",
           "abgesetzt": true
         }
       ]
