@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-13T10:23:29.086Z",
+  "stand": "2026-09-14T10:48:31.930Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "240016074",
-          "datum": "2026-07-14",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": false,
-          "gegner": "SV Avenwedde",
-          "abgesetzt": true
-        },
-        {
           "nr": "240016027",
           "datum": "2026-07-21",
           "zeit": "19:00",
@@ -27,7 +17,7 @@
           "art": "freund",
           "heim": true,
           "gegner": "SC Verl II",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "240040011",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "SC Herford",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097120",
+          "datum": "2026-11-29",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SuS Neuenkirchen",
           "abgesetzt": true
         }
       ]
@@ -217,16 +217,6 @@
       "teamId": "011MI95U5G000000VTVG0001VTR8C1K7",
       "liga": "Kreisliga A",
       "spiele": [
-        {
-          "nr": "210730240",
-          "datum": "2026-05-29",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisliga A",
-          "art": "liga",
-          "heim": true,
-          "gegner": "Tur Abdin Gütersloh",
-          "abgesetzt": true
-        },
         {
           "nr": "240016021",
           "datum": "2026-07-23",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "SV Schwarz-Gelb Bokel",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730113",
+          "datum": "2026-12-06",
+          "zeit": "12:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "SV Avenwedde II",
           "abgesetzt": true
         }
       ]
