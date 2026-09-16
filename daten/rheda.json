@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-15T10:11:49.166Z",
+  "stand": "2026-09-16T10:05:14.994Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -120,16 +120,6 @@
           "abgesetzt": false
         },
         {
-          "nr": "202019033",
-          "datum": "2026-09-23",
-          "zeit": "19:00",
-          "wettbewerb": "Kreispokal",
-          "art": "pokal",
-          "heim": false,
-          "gegner": "TuS Westf. Neuenkirchen",
-          "abgesetzt": false
-        },
-        {
           "nr": "211097060",
           "datum": "2026-09-26",
           "zeit": "16:00",
@@ -137,6 +127,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "SV Eintracht Ahaus",
+          "abgesetzt": false
+        },
+        {
+          "nr": "202019033",
+          "datum": "2026-09-29",
+          "zeit": "19:15",
+          "wettbewerb": "Kreispokal",
+          "art": "pokal",
+          "heim": false,
+          "gegner": "TuS Westf. Neuenkirchen",
           "abgesetzt": false
         },
         {
