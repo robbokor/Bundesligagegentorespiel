@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-20T09:53:03.833Z",
+  "stand": "2026-09-21T10:51:42.966Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "240016027",
-          "datum": "2026-07-21",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": true,
-          "gegner": "SC Verl II",
-          "abgesetzt": true
-        },
-        {
           "nr": "240040011",
           "datum": "2026-07-25",
           "zeit": "14:00",
@@ -27,7 +17,7 @@
           "art": "freund",
           "heim": false,
           "gegner": "Delbrücker SC",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "240016135",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "SuS Neuenkirchen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097121",
+          "datum": "2026-12-06",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "FC Kaunitz",
           "abgesetzt": true
         }
       ]
@@ -217,16 +217,6 @@
       "teamId": "011MI95U5G000000VTVG0001VTR8C1K7",
       "liga": "Kreisliga A",
       "spiele": [
-        {
-          "nr": "240016021",
-          "datum": "2026-07-23",
-          "zeit": "19:30",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": false,
-          "gegner": "Tur Abdin Gütersloh",
-          "abgesetzt": true
-        },
         {
           "nr": "240016109",
           "datum": "2026-07-26",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "SV Avenwedde II",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730127",
+          "datum": "2027-02-21",
+          "zeit": "12:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Herzebrocker SV",
           "abgesetzt": true
         }
       ]
