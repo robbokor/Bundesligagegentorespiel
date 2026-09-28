@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-27T10:37:31.999Z",
+  "stand": "2026-09-28T11:49:06.476Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -218,16 +218,6 @@
       "liga": "Kreisliga A",
       "spiele": [
         {
-          "nr": "240016109",
-          "datum": "2026-07-26",
-          "zeit": "13:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": true,
-          "gegner": "TuS Friedrichsdorf",
-          "abgesetzt": true
-        },
-        {
           "nr": "240016147",
           "datum": "2026-07-31",
           "zeit": "19:00",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "Herzebrocker SV",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730129",
+          "datum": "2027-02-28",
+          "zeit": "15:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "Germania Westerwiehe",
           "abgesetzt": true
         }
       ]
