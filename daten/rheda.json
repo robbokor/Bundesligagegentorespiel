@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-28T11:49:06.476Z",
+  "stand": "2026-09-29T11:26:31.685Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -117,7 +117,7 @@
           "art": "pokal",
           "heim": false,
           "gegner": "TuS Westf. Neuenkirchen",
-          "abgesetzt": true
+          "abgesetzt": false
         },
         {
           "nr": "211097065",
@@ -320,7 +320,7 @@
         {
           "nr": "210730057",
           "datum": "2026-10-04",
-          "zeit": "12:30",
+          "zeit": "12:00",
           "wettbewerb": "Kreisliga A",
           "art": "liga",
           "heim": true,
