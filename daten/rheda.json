@@ -1,5 +1,5 @@
 {
-  "stand": "2026-09-29T11:26:31.685Z",
+  "stand": "2026-09-30T11:14:15.967Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "240016135",
-          "datum": "2026-08-01",
-          "zeit": "14:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": true,
-          "gegner": "BV Bad Lippspringe",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097001",
           "datum": "2026-08-09",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "FC Kaunitz",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097015",
@@ -160,6 +150,16 @@
           "abgesetzt": false
         },
         {
+          "nr": "211097121",
+          "datum": "2026-10-29",
+          "zeit": "19:15",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "FC Kaunitz",
+          "abgesetzt": false
+        },
+        {
           "nr": "211097097",
           "datum": "2026-11-08",
           "zeit": "15:00",
@@ -190,16 +190,6 @@
           "abgesetzt": false
         },
         {
-          "nr": "211097121",
-          "datum": "2026-12-06",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": false,
-          "gegner": "FC Kaunitz",
-          "abgesetzt": false
-        },
-        {
           "nr": "211097135",
           "datum": "2027-02-21",
           "zeit": "15:00",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "SV Mesum",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097137",
+          "datum": "2027-02-28",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "VfL Theesen",
           "abgesetzt": true
         }
       ]
