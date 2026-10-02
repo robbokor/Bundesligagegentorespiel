@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-01T11:41:53.738Z",
+  "stand": "2026-10-02T11:11:20.663Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -130,6 +130,16 @@
           "abgesetzt": false
         },
         {
+          "nr": "202019056",
+          "datum": "2026-10-14",
+          "zeit": "19:00",
+          "wettbewerb": "Kreispokal",
+          "art": "pokal",
+          "heim": false,
+          "gegner": "SV Spexard",
+          "abgesetzt": false
+        },
+        {
           "nr": "211097081",
           "datum": "2026-10-18",
           "zeit": "15:00",
@@ -197,16 +207,6 @@
           "art": "liga",
           "heim": true,
           "gegner": "SV Mesum",
-          "abgesetzt": false
-        },
-        {
-          "nr": "211097137",
-          "datum": "2027-02-28",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": false,
-          "gegner": "VfL Theesen",
           "abgesetzt": true
         }
       ]
