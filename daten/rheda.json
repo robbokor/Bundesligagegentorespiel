@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-04T11:10:27.224Z",
+  "stand": "2026-10-05T12:24:20.874Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097001",
-          "datum": "2026-08-09",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": true,
-          "gegner": "FC Kaunitz",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097015",
           "datum": "2026-08-16",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": false,
           "gegner": "SV Mesum",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097017",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "SV Mesum",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097137",
+          "datum": "2027-02-28",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "VfL Theesen",
           "abgesetzt": true
         }
       ]
@@ -218,16 +218,6 @@
       "liga": "Kreisliga A",
       "spiele": [
         {
-          "nr": "240016147",
-          "datum": "2026-07-31",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": false,
-          "gegner": "Rot-Weiss St. Vit",
-          "abgesetzt": true
-        },
-        {
           "nr": "240016129",
           "datum": "2026-08-04",
           "zeit": "19:00",
@@ -235,7 +225,7 @@
           "art": "freund",
           "heim": false,
           "gegner": "Druffeler SG",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "240016151",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "Germania Westerwiehe",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730142",
+          "datum": "2027-03-07",
+          "zeit": "12:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "TSG Harsewinkel",
           "abgesetzt": true
         }
       ]
