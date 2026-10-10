@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-09T11:58:51.594Z",
+  "stand": "2026-10-10T11:15:34.312Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -218,16 +218,6 @@
       "liga": "Kreisliga A",
       "spiele": [
         {
-          "nr": "240016129",
-          "datum": "2026-08-04",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": false,
-          "gegner": "Druffeler SG",
-          "abgesetzt": true
-        },
-        {
           "nr": "240016151",
           "datum": "2026-08-08",
           "zeit": "13:00",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "TSG Harsewinkel",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730145",
+          "datum": "2027-03-14",
+          "zeit": "15:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "TuS Westf. Neuenkirchen",
           "abgesetzt": true
         }
       ]
