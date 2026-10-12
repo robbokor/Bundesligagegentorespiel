@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-11T11:29:01.532Z",
+  "stand": "2026-10-12T13:19:29.896Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097015",
-          "datum": "2026-08-16",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": false,
-          "gegner": "SV Mesum",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097017",
           "datum": "2026-08-23",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "VfL Theesen",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "202019015",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "VfL Theesen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097150",
+          "datum": "2027-03-07",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": true,
+          "gegner": "Lüner SV",
           "abgesetzt": true
         }
       ]
