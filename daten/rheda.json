@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-14T10:21:40.336Z",
+  "stand": "2026-10-15T10:06:57.609Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097017",
-          "datum": "2026-08-23",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": true,
-          "gegner": "VfL Theesen",
-          "abgesetzt": true
-        },
-        {
           "nr": "202019015",
           "datum": "2026-08-26",
           "zeit": "19:00",
@@ -27,7 +17,7 @@
           "art": "pokal",
           "heim": false,
           "gegner": "Türkgücü Gütersloh",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097030",
@@ -157,6 +147,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "FC Nordkirchen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "202019059",
+          "datum": "2026-11-11",
+          "zeit": "19:00",
+          "wettbewerb": "Kreispokal",
+          "art": "pokal",
+          "heim": false,
+          "gegner": "Yildizspor 1968 Rheda",
           "abgesetzt": false
         },
         {
