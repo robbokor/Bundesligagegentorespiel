@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-18T09:43:44.171Z",
+  "stand": "2026-10-19T10:58:32.775Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "202019015",
-          "datum": "2026-08-26",
-          "zeit": "19:00",
-          "wettbewerb": "Kreispokal",
-          "art": "pokal",
-          "heim": false,
-          "gegner": "Türkgücü Gütersloh",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097030",
           "datum": "2026-08-30",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": false,
           "gegner": "Lüner SV",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097033",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "Lüner SV",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097153",
+          "datum": "2027-03-14",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SV Rödinghausen II",
           "abgesetzt": true
         }
       ]
@@ -218,16 +218,6 @@
       "liga": "Kreisliga A",
       "spiele": [
         {
-          "nr": "240016151",
-          "datum": "2026-08-08",
-          "zeit": "13:00",
-          "wettbewerb": "Kreisfreundschaftsspiele",
-          "art": "freund",
-          "heim": false,
-          "gegner": "Yildizspor 1968 Rheda",
-          "abgesetzt": true
-        },
-        {
           "nr": "210730007",
           "datum": "2026-08-19",
           "zeit": "19:00",
@@ -235,7 +225,7 @@
           "art": "liga",
           "heim": false,
           "gegner": "Herzebrocker SV",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "210730009",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "TuS Westf. Neuenkirchen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730157",
+          "datum": "2027-03-21",
+          "zeit": "12:00",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": true,
+          "gegner": "VfL Rheda",
           "abgesetzt": true
         }
       ]
