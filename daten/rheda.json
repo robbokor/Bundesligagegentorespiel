@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-25T09:56:24.875Z",
+  "stand": "2026-10-26T11:18:25.022Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097030",
-          "datum": "2026-08-30",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": false,
-          "gegner": "Lüner SV",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097033",
           "datum": "2026-09-06",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "SV Rödinghausen II",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097045",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "SV Rödinghausen II",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097165",
+          "datum": "2027-03-21",
+          "zeit": "15:00",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SF Ostinghausen",
           "abgesetzt": true
         }
       ]
@@ -218,16 +218,6 @@
       "liga": "Kreisliga A",
       "spiele": [
         {
-          "nr": "210730007",
-          "datum": "2026-08-19",
-          "zeit": "19:00",
-          "wettbewerb": "Kreisliga A",
-          "art": "liga",
-          "heim": false,
-          "gegner": "Herzebrocker SV",
-          "abgesetzt": true
-        },
-        {
           "nr": "210730009",
           "datum": "2026-08-23",
           "zeit": "12:30",
@@ -235,7 +225,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "Germania Westerwiehe",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "210730022",
@@ -415,6 +405,16 @@
           "art": "liga",
           "heim": true,
           "gegner": "VfL Rheda",
+          "abgesetzt": false
+        },
+        {
+          "nr": "210730161",
+          "datum": "2027-03-25",
+          "zeit": "18:30",
+          "wettbewerb": "Kreisliga A",
+          "art": "liga",
+          "heim": false,
+          "gegner": "SV Avenwedde II",
           "abgesetzt": true
         }
       ]
