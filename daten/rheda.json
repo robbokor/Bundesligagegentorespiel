@@ -1,5 +1,5 @@
 {
-  "stand": "2026-10-29T11:37:13.347Z",
+  "stand": "2026-10-30T11:28:38.778Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097033",
-          "datum": "2026-09-06",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": true,
-          "gegner": "SV Rödinghausen II",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097045",
           "datum": "2026-09-13",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "SF Ostinghausen",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097049",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "SF Ostinghausen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097169",
+          "datum": "2027-04-04",
+          "zeit": "15:45",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "FC RW Kirchlengern",
           "abgesetzt": true
         }
       ]
