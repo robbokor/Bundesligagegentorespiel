@@ -1,5 +1,5 @@
 {
-  "stand": "2026-11-01T11:55:01.462Z",
+  "stand": "2026-11-02T13:41:02.973Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -150,6 +150,16 @@
           "abgesetzt": false
         },
         {
+          "nr": "240031460",
+          "datum": "2027-01-23",
+          "zeit": "15:00",
+          "wettbewerb": "Kreisfreundschaftsspiele",
+          "art": "freund",
+          "heim": false,
+          "gegner": "TuS Hiltrup I",
+          "abgesetzt": false
+        },
+        {
           "nr": "211097135",
           "datum": "2027-02-21",
           "zeit": "15:00",
@@ -197,16 +207,6 @@
           "art": "liga",
           "heim": false,
           "gegner": "SF Ostinghausen",
-          "abgesetzt": false
-        },
-        {
-          "nr": "211097169",
-          "datum": "2027-04-04",
-          "zeit": "15:45",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": false,
-          "gegner": "FC RW Kirchlengern",
           "abgesetzt": true
         }
       ]
