@@ -1,5 +1,5 @@
 {
-  "stand": "2026-11-07T11:49:29.900Z",
+  "stand": "2026-11-08T12:01:21.202Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097045",
-          "datum": "2026-09-13",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": true,
-          "gegner": "SF Ostinghausen",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097049",
           "datum": "2026-09-20",
           "zeit": "15:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": true,
           "gegner": "FC RW Kirchlengern",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "211097060",
@@ -207,6 +197,16 @@
           "art": "liga",
           "heim": false,
           "gegner": "SF Ostinghausen",
+          "abgesetzt": false
+        },
+        {
+          "nr": "211097169",
+          "datum": "2027-04-04",
+          "zeit": "15:45",
+          "wettbewerb": "Verbandsliga",
+          "art": "liga",
+          "heim": false,
+          "gegner": "FC RW Kirchlengern",
           "abgesetzt": true
         }
       ]
