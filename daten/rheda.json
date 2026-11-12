@@ -1,5 +1,5 @@
 {
-  "stand": "2026-11-11T12:50:12.828Z",
+  "stand": "2026-11-12T13:52:28.357Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -10,16 +10,6 @@
       "liga": "Verbandsliga",
       "spiele": [
         {
-          "nr": "211097049",
-          "datum": "2026-09-20",
-          "zeit": "15:00",
-          "wettbewerb": "Verbandsliga",
-          "art": "liga",
-          "heim": true,
-          "gegner": "FC RW Kirchlengern",
-          "abgesetzt": true
-        },
-        {
           "nr": "211097060",
           "datum": "2026-09-26",
           "zeit": "16:00",
@@ -27,7 +17,7 @@
           "art": "liga",
           "heim": false,
           "gegner": "SV Eintracht Ahaus",
-          "abgesetzt": false
+          "abgesetzt": true
         },
         {
           "nr": "202019033",
@@ -190,6 +180,16 @@
           "abgesetzt": false
         },
         {
+          "nr": "202019062",
+          "datum": "2027-03-17",
+          "zeit": "19:00",
+          "wettbewerb": "Kreispokal",
+          "art": "pokal",
+          "heim": true,
+          "gegner": "FSC Rheda",
+          "abgesetzt": false
+        },
+        {
           "nr": "211097165",
           "datum": "2027-03-21",
           "zeit": "15:00",
@@ -320,7 +320,7 @@
         {
           "nr": "210730097",
           "datum": "2026-11-15",
-          "zeit": "12:30",
+          "zeit": "12:00",
           "wettbewerb": "Kreisliga A",
           "art": "liga",
           "heim": true,
