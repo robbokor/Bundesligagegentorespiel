@@ -1,5 +1,5 @@
 {
-  "stand": "2026-11-12T13:52:28.357Z",
+  "stand": "2026-11-13T13:15:43.658Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -122,7 +122,7 @@
         {
           "nr": "211097120",
           "datum": "2026-11-29",
-          "zeit": "15:00",
+          "zeit": "14:30",
           "wettbewerb": "Verbandsliga",
           "art": "liga",
           "heim": false,
