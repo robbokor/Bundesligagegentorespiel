@@ -1,5 +1,5 @@
 {
-  "stand": "2026-11-18T14:20:36.511Z",
+  "stand": "2026-11-19T14:32:46.344Z",
   "quelle": "fussball.de",
   "hinweis": "Nur Spielpaarungen. Die Ergebnisse sind auf fussball.de nicht maschinenlesbar und werden in der Anwendung von Hand nachgetragen.",
   "mannschaften": [
@@ -175,8 +175,8 @@
           "zeit": "19:00",
           "wettbewerb": "Kreispokal",
           "art": "pokal",
-          "heim": true,
-          "gegner": "FSC Rheda",
+          "heim": false,
+          "gegner": "SW Sende",
           "abgesetzt": false
         },
         {
